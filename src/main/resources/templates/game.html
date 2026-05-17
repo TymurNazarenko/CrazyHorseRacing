@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xml:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Crazy Horse Racing</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+
+    <script th:inline="javascript">
+        let wallHitboxes = [[${walls}]];
+        let gameId = [[${gameId}]];
+
+        const status_socket = new WebSocket(`ws://localhost:8080/ws/game/` + gameId + `/status`);
+
+        status_socket.onmessage = (event) => {
+            console.log("Game update:", event.data);
+        };
+
+        const move_socket = new WebSocket(`ws://localhost:8080/ws/game/` + gameId + `/move`);
+
+        function move_up() {
+            move_socket.send("MOVE_UP");
+        }
+        function move_down() {
+            move_socket.send("MOVE_DOWN");
+        }
+        function move_left() {
+            move_socket.send("MOVE_LEFT");
+        }
+        function move_right() {
+            move_socket.send("MOVE_RIGHT");
+        }
+
+        document.addEventListener("keydown", function(event) {
+            switch (event.key) {
+                case "ArrowUp":
+                    move_up();
+                    break;
+                case "ArrowDown":
+                    move_down();
+                    break;
+                case "ArrowLeft":
+                    move_left();
+                    break;
+                case "ArrowRight":
+                    move_right();
+                    break;
+            }
+        });
+    </script>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 style="text-align:center">Your Game</h1>
+    <h4 id="gamestate" style="text-align:center"> TODO status </h4>
+    <div id="game">
+        <img id="level-image" th:src="${levelImage}" alt="If you're seeing this, something went wrong">
+    </div>
+</div>
+</body>
+</html>

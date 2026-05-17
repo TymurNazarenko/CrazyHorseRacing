@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xml:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Crazy Horse Racing</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const radios = document.querySelectorAll('input[name="selectedHorseType"]');
+            const submitBtn = document.getElementById('submitBtn');
+
+            let selectedRadio = null;
+
+            radios.forEach(radio => {
+                radio.addEventListener('click', function (e) {
+                    // If clicking the already selected radio → unselect it
+                    if (selectedRadio === this) {
+                        this.checked = false;
+                        selectedRadio = null;
+                    } else {
+                        selectedRadio = this;
+                    }
+
+                    updateButtonState();
+                });
+            });
+
+            function updateButtonState() {
+                submitBtn.disabled = (selectedRadio === null);
+            }
+
+            // Initialize (in case of preselection)
+            selectedRadio = document.querySelector('input[name="selectedHorseType"]:checked');
+            updateButtonState();
+        });
+    </script>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 style="text-align:center">Crazy Horse Racing</h1>
+
+
+
+    <h3 style="text-align:center">Choose your horse</h3>
+    <form th:action="@{/}" method="post" style="justify-content: center; align-items: center; align-self: center">
+        <div class="grid-container">
+            <div class="grid-item" th:each="horseType : ${horses}">
+                <input type="radio"
+                       name="selectedHorseType"
+                       th:id="'horseType-' + ${horseType.id}"
+                       th:value="${horseType.id}" />
+                <label th:for="'horseType-' + ${horseType.id}">
+                    <img th:src="${horseType.imagePath}" alt="Horse"/>
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn" disabled>Search for a game</button>
+    </form>
+
+    <div th:if="${error != null and !#strings.isEmpty(error)}"
+         style="color: red; display:flex; justify-content: center; align-items: center; padding: 10px"
+         th:text="${error}">
+    </div>
+</div>
+</body>
+</html>
