@@ -1,8 +1,10 @@
 package de.thb.crazyhorseracing.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Horse {
@@ -18,6 +20,11 @@ public class Horse {
     private static final Velocity RIGHT_VELOCITY = new Velocity(1, 0);
 
     @Getter
+    private static final AtomicInteger idCounter = new AtomicInteger(0);
+    @Getter
+    private final int id;
+
+    @Getter
     private final HorseType type;
     @Getter
     private final Player player;
@@ -28,7 +35,9 @@ public class Horse {
     @Getter
     @Setter
     private Velocity velocity;
+
     @Getter
+    @JsonIgnore
     private final AtomicLong lastPlayerMoveTime = new AtomicLong(0);
 
     public Horse(HorseType type, Player player, Vec vec) {
@@ -36,6 +45,7 @@ public class Horse {
         this.player = player;
         this.vec = vec;
         this.velocity = new Velocity(0,0);
+        this.id = idCounter.getAndIncrement();
     }
 
     private void setMoveTime() {

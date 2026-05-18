@@ -20,7 +20,7 @@ public class PlayerManager {
 
     public Optional<Player> getPlayer(String id) {
         for (Player player : players) {
-            if (player.secretId().equals(id)) {
+            if (player.getId().equals(id)) {
                 return Optional.of(player);
             }
         }
