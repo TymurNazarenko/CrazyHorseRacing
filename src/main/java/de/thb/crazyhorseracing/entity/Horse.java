@@ -9,15 +9,13 @@ public class Horse {
     @Getter
     private static final long MOVE_DELAY_NS = 1_000_000_000;
     @Getter
-    private static final double MOVE_VELOCITY = 1.0;
+    private static final Velocity UP_VELOCITY = new Velocity(0, 1);
     @Getter
-    private static final Velocity UP_VELOCITY = new  Velocity(0, 1);
+    private static final Velocity DOWN_VELOCITY = new Velocity(0, -1);
     @Getter
-    private static final Velocity DOWN_VELOCITY = new  Velocity(0, -1);
+    private static final Velocity LEFT_VELOCITY = new Velocity(-1, 0);
     @Getter
-    private static final Velocity LEFT_VELOCITY = new  Velocity(-1, 0);
-    @Getter
-    private static final Velocity RIGHT_VELOCITY = new  Velocity(1, 0);
+    private static final Velocity RIGHT_VELOCITY = new Velocity(1, 0);
 
     @Getter
     private final HorseType type;
@@ -51,28 +49,24 @@ public class Horse {
     public boolean Move(MoveType moveType) {
         if (!hasEnoughTimeSinceLastMoveElapsed()) return false;
 
-        return switch (moveType) {
+        switch (moveType) {
             case MOVE_UP -> {
                 velocity.addVelocity(UP_VELOCITY);
                 setMoveTime();
-                yield true;
             }
             case MOVE_DOWN -> {
                 velocity.addVelocity(DOWN_VELOCITY);
                 setMoveTime();
-                yield true;
             }
             case MOVE_LEFT -> {
                 velocity.addVelocity(LEFT_VELOCITY);
                 setMoveTime();
-                yield true;
             }
             case MOVE_RIGHT -> {
                 velocity.addVelocity(RIGHT_VELOCITY);
                 setMoveTime();
-                yield true;
             }
-            default -> false;
-        };
+        }
+        return true;
     }
 }

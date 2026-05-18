@@ -49,8 +49,8 @@ public class HomeController {
             return "redirect:/";
         }
 
-        model.addAttribute("levelImage", lobby.getGame().getMap().getImagePath()); // populate the game (image)
-        model.addAttribute("walls", lobby.getGame().getMap().getWalls()); // populate the game (wall hitboxes)
+        model.addAttribute("levelImage", lobby.getGame().getMap().imagePath()); // populate the game (image)
+        model.addAttribute("walls", lobby.getGame().getMap().walls()); // populate the game (wall hitboxes)
         model.addAttribute("gameId", lobby.getId());
 
         return "game";

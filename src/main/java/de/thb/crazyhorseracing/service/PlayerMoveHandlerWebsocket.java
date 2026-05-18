@@ -4,7 +4,6 @@ import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.MoveType;
 import de.thb.crazyhorseracing.entity.Player;
 import org.jspecify.annotations.NonNull;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -23,7 +22,7 @@ public class PlayerMoveHandlerWebsocket extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(@NonNull WebSocketSession session, TextMessage message) {
+    protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) {
         String jsessionId = (String) session.getAttributes().get("JSESSIONID");
         Optional<Player> pl = players.getPlayer(jsessionId);
         if (pl.isEmpty()) return;

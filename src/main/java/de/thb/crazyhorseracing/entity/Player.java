@@ -6,7 +6,6 @@ import lombok.NonNull;
 import java.util.Optional;
 
 public class Player {
-    @Getter
     private String id;
 
     @Getter
@@ -23,5 +22,9 @@ public class Player {
 
     public void setHorseType(@NonNull HorseType horseType) {
         this.horseType = Optional.of(horseType);
+    }
+
+    public String secretId() {
+        return id;
     }
 }

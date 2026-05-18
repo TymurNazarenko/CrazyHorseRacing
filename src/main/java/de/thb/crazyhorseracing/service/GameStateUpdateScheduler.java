@@ -20,7 +20,7 @@ public class GameStateUpdateScheduler {
     @Scheduled(fixedRate = 500)
     public void pushUpdates() {
         for (Lobby lobby : lobbies.getLobbies()) {
-            handler.broadcast((int) lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame().getHorses())); // TODO
+            handler.broadcast(lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame().getHorses())); // TODO
         }
     }
 }

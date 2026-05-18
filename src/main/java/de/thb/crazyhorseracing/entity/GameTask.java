@@ -46,7 +46,6 @@ public class GameTask implements Runnable {
 
     public void stop() {
         running = false;
-        onStop();
     }
 
     private void onStop() {

@@ -1,7 +1,6 @@
 package de.thb.crazyhorseracing.service;
 
 import org.jspecify.annotations.NonNull;
-import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -28,7 +27,7 @@ public class GameStateUpdaterWebSocket extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) {
         Integer gameId = (Integer) session.getAttributes().get("gameId");
 
         Set<WebSocketSession> sessions = gameSessions.get(gameId);

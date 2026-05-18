@@ -5,7 +5,6 @@ import de.thb.crazyhorseracing.entity.Player;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.jspecify.annotations.NonNull;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -52,9 +51,9 @@ public class GameHandshakeInterceptor implements HandshakeInterceptor {
     }
 
     @Override
-    public void afterHandshake(ServerHttpRequest request,
-                               ServerHttpResponse response,
-                               WebSocketHandler wsHandler,
+    public void afterHandshake(@NonNull ServerHttpRequest request,
+                               @NonNull ServerHttpResponse response,
+                               @NonNull WebSocketHandler wsHandler,
                                Exception exception) {
         // optional
     }

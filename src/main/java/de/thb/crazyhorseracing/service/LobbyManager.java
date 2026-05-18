@@ -1,6 +1,5 @@
 package de.thb.crazyhorseracing.service;
 
-import de.thb.crazyhorseracing.entity.Game;
 import de.thb.crazyhorseracing.entity.GameMap;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;

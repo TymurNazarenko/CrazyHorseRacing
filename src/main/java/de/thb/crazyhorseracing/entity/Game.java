@@ -11,10 +11,13 @@ import java.util.concurrent.Future;
 import static de.thb.crazyhorseracing.entity.LobbyState.PLAYING;
 
 public class Game {
-    private Lobby lobby; // needed to communicate game state back to the lobby
-    private List<Horse> horses;
     @Getter
-    private GameMap map;
+    private final Lobby lobby; // needed to communicate game state back to the lobby
+    @Getter
+    private final List<Horse> horses;
+    @Getter
+    private final GameMap map;
+
     @Getter
     @Setter
     private Future<?> gameTaskHandler;
@@ -35,7 +38,7 @@ public class Game {
     }
 
     public List<Vec> getAvailableSpawnpoints() {
-        List<Vec> allSpawnpoints = map.getSpawnpoints();
+        List<Vec> allSpawnpoints = map.horseSpawnpoints();
         List<Vec> availableSpawnpoints = new ArrayList<>();
         for (Vec spawnpoint : allSpawnpoints) {
             if (isSpawnpointAvailable(spawnpoint)) {
@@ -46,7 +49,7 @@ public class Game {
     }
 
     public boolean addHorse(Player player) { // Returns whether horse was actually added
-        if (horses.size() >= map.getMaxPlayers()) return false;
+        if (horses.size() >= map.maxPlayers()) return false;
 
         List<Vec> spawnpoints = getAvailableSpawnpoints();
         if  (spawnpoints.isEmpty()) return false;
@@ -74,10 +77,6 @@ public class Game {
             }
         }
         return Optional.empty();
-    }
-
-    public List<Horse> getHorses() {
-        return horses;
     }
 
     public boolean doPlayerMove(Player player, MoveType moveType) { // returns whether the move was actually carried out

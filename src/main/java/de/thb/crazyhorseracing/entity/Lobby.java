@@ -25,17 +25,20 @@ public class Lobby {
     private final int minPlayers;
     @Getter
     private final int maxPlayers;
+    @Getter
     private final List<Player> players;
+    @Getter
+    private final Game game;
     @Getter
     @Setter
     private LobbyState lobbyState = WAITING_FOR_PLAYERS;
-    @Getter
-    private Game game;
+
 
     @Getter
     private final ThreadPoolTaskExecutor executor;
     @Getter
-    private TaskScheduler scheduler;
+    private final TaskScheduler scheduler;
+
     @Getter
     private ScheduledFuture<?> gameTimerTaskFuture;
     @Getter
@@ -132,18 +135,13 @@ public class Lobby {
     }
 
     public synchronized void stopGameTimer() {
-        if (gameTimerTaskFuture != null) {
-            gameTimerTaskFuture.cancel(false);
-            gameTimerTaskFuture = null;
-        }
+        if (gameTimerTaskFuture == null) return;
+        gameTimerTaskFuture.cancel(false);
+        gameTimerTaskFuture = null;
     }
 
     public boolean isEmpty() {
         return players.isEmpty();
-    }
-
-    public List<Player> getPlayers() {
-        return new ArrayList<>(players);
     }
 
     public boolean isPlayerAllowed(Player player) {
