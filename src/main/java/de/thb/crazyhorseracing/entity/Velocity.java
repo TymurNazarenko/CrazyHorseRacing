@@ -3,11 +3,9 @@ package de.thb.crazyhorseracing.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Vector;
-
 public class Velocity {
-    @Setter
     @Getter
+    @Setter
     private double x, y;
 
     public Velocity(double x, double y) {

@@ -18,25 +18,14 @@ import java.util.stream.Stream;
 public class HorseListLoader {
     private List<HorseType> horseTypes;
 
-    private Optional<HorseType> parseFile(String content) {
+    public HorseType parseFile(String content) {
         // TODO
-        return Optional.empty();
-    }
-
-    public Set<String> listFilesUsingJavaIO(String dir) {
-        return Stream.of(new File(dir).listFiles())
-                .filter(file -> !file.isDirectory())
-                .map(File::getName)
-                .collect(Collectors.toSet());
+        return null;
     }
 
     @PostConstruct
     public void init() {
         horseTypes = new ArrayList<>();
-
-        for (String fileName : listFilesUsingJavaIO("./src/main/resources/horse_types")) {
-            System.out.println(fileName);
-        }
 
         // TODO load these from files instead
         Hitbox basichitbox = new Hitbox(List.of(new Vec(-1,-1), new Vec(-1,1), new Vec(1,1), new Vec(1,-1)));

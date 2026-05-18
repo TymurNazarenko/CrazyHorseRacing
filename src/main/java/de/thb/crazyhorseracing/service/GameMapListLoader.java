@@ -2,52 +2,62 @@ package de.thb.crazyhorseracing.service;
 
 import de.thb.crazyhorseracing.entity.*;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class GameMapListLoader {
+    @Getter
     private List<GameMap> maps;
+    private ObjectMapper jsonMapper;
+
+    public GameMap parseFile(String content) {
+        // TODO throw exceptions here (when format is wrong) and handle them in the loop
+        GameMapDTO levelRaw = jsonMapper.readValue(content, GameMapDTO.class);
+        GameMap level = GameMapMapper.toDomain(levelRaw);
+        return level;
+    }
 
     @PostConstruct
     public void init() {
         maps = new ArrayList<>();
-
-        // TODO LOAD FROM FILES
+        jsonMapper = new ObjectMapper();
 
         File dir = new File("./src/main/resources/levels");
         File[] directoryListing = dir.listFiles();
         if (directoryListing == null) throw new IllegalStateException("Levels directory not found!");
 
         for (File f : directoryListing) {
-            // Do something with child
+            try {
+                String content = Files.readString(Path.of(f.getPath()));
+                GameMap gameMap = parseFile(content);
+                if (gameMap == null) { throw new NullPointerException(); }
+                maps.add(gameMap);
+            } catch (IOException e) {
+                System.err.println("Couldn't read level file: " + f.getName());
+                System.err.println(e.getMessage());
+            } catch (NullPointerException e) {
+                System.err.println("Level turned null after being parsed: " + f.getName());
+                System.err.println(e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Something went wrong when parsing level: " + f.getName());
+                System.err.println(e.getMessage());
+            }
         }
 
-        ArrayList<Vec> firstMapSpawnpoints = new ArrayList<>();
-        firstMapSpawnpoints.add(new Vec(0, 0));
-        firstMapSpawnpoints.add(new Vec(1, 1));
-        ArrayList<Wall> firstMapWalls = new ArrayList<>();
-        firstMapWalls.add(new Wall(new Hitbox(List.of(new Vec(0,0), new Vec(0,1), new Vec(1,1), new Vec(1,0)))));
-
-        maps.add(new GameMap(
-            1,
-                firstMapWalls,
-            new Carrot(null),
-            2,
-            firstMapSpawnpoints,
-            "/images/level1.jpg"
-        ));
+        System.out.println("Loaded " + maps.size() + " levels");
     }
 
     public Optional<GameMap> getMapById(long id) {
         return maps.stream().filter(m -> m.id() == id).findFirst();
-    }
-
-    public List<GameMap> copyMaps() {
-        return new ArrayList<>(maps);
     }
 }

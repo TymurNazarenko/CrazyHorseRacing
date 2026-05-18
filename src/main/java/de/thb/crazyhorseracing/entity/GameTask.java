@@ -3,6 +3,9 @@ package de.thb.crazyhorseracing.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import static de.thb.crazyhorseracing.entity.LobbyState.GAME_OVER;
+import static de.thb.crazyhorseracing.entity.LobbyState.PLAYING;
+
 public class GameTask implements Runnable {
     @Getter
     private final Game game;
@@ -16,6 +19,7 @@ public class GameTask implements Runnable {
 
     @Override
     public void run() {
+        game.getLobby().setLobbyState(PLAYING);
         System.out.println("GameTask started.");
         long lastTime = System.nanoTime();
         while (running && !Thread.currentThread().isInterrupted()) {
@@ -49,6 +53,7 @@ public class GameTask implements Runnable {
     }
 
     private void onStop() {
+        game.getLobby().setLobbyState(GAME_OVER);
         System.out.println("GameTask stopped.");
     }
 }
