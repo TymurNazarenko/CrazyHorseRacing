@@ -1,0 +1,5 @@
+{
+  "id": 2,
+  "imagePath": "/images/cyan.jpg",
+  "hitbox": [[-1, -1], [-1, 0], [0, 0], [0, -1]]
+}
