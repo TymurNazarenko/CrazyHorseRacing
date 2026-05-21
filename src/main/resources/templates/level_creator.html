@@ -1,92 +1,399 @@
 <!DOCTYPE html>
 <html xml:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<!--This was generated entirely by ChatGPT. TODO: Remove all the fluff-->
+
 <head>
     <meta charset="UTF-8">
-    <title>Crazy Horse Racing</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <title>Level Editor</title>
 
     <style>
-        #game {
-            border: 3px dashed #888;
-            background: #fff;
-
+        body {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            gap: 20px;
+            font-family: Arial;
         }
 
-        #game.hover {
-            border-color: #333;
-            background: #fafafa;
+        #canvas {
+            border: 1px solid black;
         }
 
-        #level-image-placeholder {
-            color: #888;
-            font-size: 24px;
-            text-align: center;
-            pointer-events: none;
+        #panel {
+            width: 320px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        .item {
+            cursor: pointer;
+            padding: 4px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .selected {
+            background: #ffcccc;
         }
     </style>
 </head>
+
 <body>
-<div layout:fragment="content">
-    <h1 style="text-align:center">Level creator</h1>
-    <div id="game">
-        <div id="level-image-placeholder">Drag & Drop Image Here</div>
+
+<div>
+    <div>
+        <button onclick="setMode('wall')">Create New Wall</button>
+        <button onclick="setMode('spawn')">Place Spawnpoint</button>
+        <button onclick="setMode('carrot')">Place Carrots</button>
+        <button id="downloadBtn">Download as JSON</button>
+        <br><br>
+        <button id="confirmBtn">Confirm</button>
+        <button id="cancelBtn">Cancel</button>
     </div>
+
+    <canvas id="canvas" width="1000" height="1000"></canvas>
 </div>
+
+<div id="panel">
+
+    <div class="section">
+        <b>Walls</b>
+        <div id="wallList"></div>
+    </div>
+
+    <div class="section">
+        <b>Carrot</b>
+        <div id="carrotList"></div>
+    </div>
+
+    <div class="section">
+        <b>Spawnpoints</b>
+        <div id="spawnList"></div>
+    </div>
+
+</div>
+
 <script>
-    let levelImageName = "";
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
-    const dropArea = document.getElementById('game');
-    const placeholder = document.getElementById('level-image-placeholder');
+    let mode = "wall";
+    let backgroundImage = null;
+    let backgroundImageName = null;
 
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, e => e.preventDefault());
-    });
+    let walls = [];
+    let carrot = null;
+    let spawnpoints = [];
 
-    // Highlight on drag
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => {
-            dropArea.classList.add('hover');
+    let temp_hitbox = [];
+
+    let selectedWall = null;
+
+    // Load image
+    const spawnImg = new Image();
+    spawnImg.src = "/images/pink.jpg";
+
+    // ==========================
+    // MODE
+    // ==========================
+    function setMode(m) {
+        mode = m;
+        temp_hitbox = [];
+        draw();
+    }
+
+    // ==========================
+    // DRAW
+    // ==========================
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 🖼️ Draw background first
+        if (backgroundImage) {
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+        }  else {
+            // Placeholder text
+            ctx.fillStyle = "#888";
+            ctx.font = "24px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            ctx.fillText(
+                "Drag and drop background image here",
+                canvas.width / 2,
+                canvas.height / 2
+            );
+        }
+
+        // Walls
+        walls.forEach((w, i) => {
+            ctx.strokeStyle = (i === selectedWall) ? "red" : "black";
+            drawHitbox(w);
         });
-    });
 
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => {
-            dropArea.classList.remove('hover');
+        // Carrot
+        if (carrot) {
+            ctx.strokeStyle = "orange";
+            drawHitbox(carrot);
+        }
+
+        // Temp
+        ctx.strokeStyle = "green";
+        drawHitbox(temp_hitbox);
+
+        // Spawnpoints
+        spawnpoints.forEach(p => {
+            drawSpawn(p);
         });
-    });
+    }
 
-    // Handle drop
-    dropArea.addEventListener('drop', e => {
-        const files = e.dataTransfer.files;
-        if (files.length === 0) return;
+    function drawHitbox(points) {
+        if (points.length < 1) return;
 
-        const file = files[0];
-        if (!file.type.startsWith('image/')) {
-            alert('Please drop an image file.');
+        if (points.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        points.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+
+    function drawSpawn(p) {
+        const size = 100;
+
+        if (spawnImg.complete) {
+            ctx.drawImage(
+                spawnImg,
+                p.x - size / 2,
+                p.y - size / 2,
+                size,
+                size
+            );
+        } else {
+            // fallback
+            ctx.fillStyle = "blue";
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // ==========================
+    // INPUT
+    // ==========================
+    canvas.addEventListener("click", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (mode === "spawn") {
+            spawnpoints.push({x, y});
+            updateLists();
+            draw();
             return;
         }
 
+        if (mode === "wall" || mode === "carrot") {
+            temp_hitbox.push({x, y});
+            draw();
+        }
+    });
+
+    // ==========================
+    // DRAG & DROP BACKGROUND
+    // ==========================
+    canvas.addEventListener("dragover", (e) => {
+        e.preventDefault(); // required to allow drop
+    });
+
+    canvas.addEventListener("drop", (e) => {
+        e.preventDefault();
+
+        const file = e.dataTransfer.files[0];
+        if (!file || !file.type.startsWith("image/")) return;
+
+        backgroundImageName = file.name; // 🔥 store name
+
         const reader = new FileReader();
+
         reader.onload = function(event) {
-            let img = dropArea.querySelector('img');
-
-            if (!img) {
-                img = document.createElement('img');
-                img.id = 'level-image';
-                dropArea.appendChild(img);
-            }
-
+            const img = new Image();
+            img.onload = () => {
+                backgroundImage = img;
+                draw();
+            };
             img.src = event.target.result;
-            placeholder.style.display = 'none';
         };
 
         reader.readAsDataURL(file);
-        levelImageName = file.name;
     });
+
+    // ==========================
+    // BUTTONS
+    // ==========================
+    document.getElementById("confirmBtn").onclick = () => {
+        if (temp_hitbox.length === 0) return;
+
+        if (mode === "wall") {
+            walls.push([...temp_hitbox]);
+        }
+
+        if (mode === "carrot") {
+            carrot = [...temp_hitbox]; // overwrite (only one allowed)
+        }
+
+        temp_hitbox = [];
+        updateLists();
+        draw();
+    };
+
+    document.getElementById("cancelBtn").onclick = () => {
+        temp_hitbox = [];
+        draw();
+    };
+
+    // ==========================
+    // LISTS
+    // ==========================
+    function updateLists() {
+        updateWalls();
+        updateCarrot();
+        updateSpawns();
+    }
+
+    // Walls
+    function updateWalls() {
+        const el = document.getElementById("wallList");
+        el.innerHTML = "";
+
+        walls.forEach((w, i) => {
+            const div = document.createElement("div");
+            div.className = "item";
+            if (i === selectedWall) div.classList.add("selected");
+
+            div.textContent = `Wall ${i}`;
+
+            const del = document.createElement("button");
+            del.textContent = "Delete";
+
+            del.onclick = (e) => {
+                e.stopPropagation();
+                walls.splice(i,1);
+                if (selectedWall === i) selectedWall = null;
+                updateLists();
+                draw();
+            };
+
+            div.onclick = () => {
+                selectedWall = i;
+                updateLists();
+                draw();
+            };
+
+            div.appendChild(del);
+            el.appendChild(div);
+        });
+    }
+
+    // Carrot
+    function updateCarrot() {
+        const el = document.getElementById("carrotList");
+        el.innerHTML = "";
+
+        if (!carrot) return;
+
+        const div = document.createElement("div");
+        div.textContent = "Carrot Hitbox";
+
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+
+        del.onclick = () => {
+            carrot = null;
+            updateLists();
+            draw();
+        };
+
+        div.appendChild(del);
+        el.appendChild(div);
+    }
+
+    // Spawnpoints
+    function updateSpawns() {
+        const el = document.getElementById("spawnList");
+        el.innerHTML = "";
+
+        spawnpoints.forEach((p, i) => {
+            const div = document.createElement("div");
+            div.textContent = `Spawn ${i} (${Math.round(p.x)}, ${Math.round(p.y)})`;
+
+            const del = document.createElement("button");
+            del.textContent = "Delete";
+
+            del.onclick = () => {
+                spawnpoints.splice(i,1);
+                updateLists();
+                draw();
+            };
+
+            div.appendChild(del);
+            el.appendChild(div);
+        });
+    }
+
+    // Initial
+    updateLists();
+    draw();
+
+    document.getElementById("downloadBtn").onclick = () => {
+
+        const convertPoint = (p) => `[${p.x}, ${p.y}]`;
+
+        const formatHitbox = (hb) =>
+            `[${hb.map(convertPoint).join(", ")}]`;
+
+        const formatWalls = (walls) =>
+            `[\n  ${walls.map(formatHitbox).join(",\n  ")}\n]`;
+
+        const formatCarrot = (carrot) =>
+            carrot ? formatHitbox(carrot) : "null";
+
+        const formatSpawns = (spawns) =>
+            `[${spawns.map(convertPoint).join(", ")}]`;
+
+        const jsonString = `{
+  "id": -1,
+  "maxPlayers": ${spawnpoints.length},
+  "imagePath": ${backgroundImageName ? `"${backgroundImageName}"` : "null"},
+  "carrot": ${formatCarrot(carrot)},
+  "spawnpoints": ${formatSpawns(spawnpoints)},
+  "walls": ${formatWalls(walls)}
+}`;
+
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "level.json";
+        a.click();
+
+        URL.revokeObjectURL(url);
+    };
 </script>
+
 </body>
 </html>
