@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 @Component
-public class HorseListLoader {
+public class HorseTypeListLoader {
     @Getter
     private List<HorseType> horseTypes;
     private ObjectMapper jsonMapper;

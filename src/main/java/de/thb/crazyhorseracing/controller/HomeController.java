@@ -3,7 +3,7 @@ package de.thb.crazyhorseracing.controller;
 import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
-import de.thb.crazyhorseracing.repository.HorseListLoader;
+import de.thb.crazyhorseracing.repository.HorseTypeListLoader;
 import de.thb.crazyhorseracing.service.LobbyManager;
 import de.thb.crazyhorseracing.service.PlayerManager;
 import jakarta.servlet.http.HttpSession;
@@ -18,20 +18,20 @@ import java.util.Optional;
 
 @Controller
 public class HomeController {
-    private final HorseListLoader horseListLoader;
+    private final HorseTypeListLoader horseTypeListLoader;
 
     private final LobbyManager lobbyManager;
     private final PlayerManager playerManager;
 
-    public HomeController(HorseListLoader horseListLoader, LobbyManager lobbyManager, PlayerManager playerManager) {
-        this.horseListLoader = horseListLoader;
+    public HomeController(HorseTypeListLoader horseTypeListLoader, LobbyManager lobbyManager, PlayerManager playerManager) {
+        this.horseTypeListLoader = horseTypeListLoader;
         this.lobbyManager = lobbyManager;
         this.playerManager = playerManager;
     }
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("horses", horseListLoader.copyHorses());
+        model.addAttribute("horses", horseTypeListLoader.copyHorses());
         return "home";
     }
 
@@ -61,7 +61,7 @@ public class HomeController {
     public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, Model model, HttpSession session) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
-        Optional<HorseType> horseOptional = horseListLoader.getHorseById(selectedHorseType);
+        Optional<HorseType> horseOptional = horseTypeListLoader.getHorseById(selectedHorseType);
         if (horseOptional.isEmpty()) { // User selected a horse that doesn't exist
             model.addAttribute("error", "Invalid horse selected");
             return home(model);

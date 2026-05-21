@@ -1,5 +1,6 @@
 package de.thb.crazyhorseracing.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,16 +9,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
+import static de.thb.crazyhorseracing.entity.LobbyState.GAME_OVER;
 import static de.thb.crazyhorseracing.entity.LobbyState.PLAYING;
 
 public class Game {
+    @JsonIgnore
     @Getter
     private final Lobby lobby; // needed to communicate game state back to the lobby
     @Getter
     private final List<Horse> horses;
+    @JsonIgnore
     @Getter
     private final GameMap map;
 
+    @Getter
+    private Player winner = null;
+
+    @JsonIgnore
     @Getter
     @Setter
     private Future<?> gameTaskHandler;
@@ -37,6 +45,7 @@ public class Game {
         return true;
     }
 
+    @JsonIgnore
     public List<Vec> getAvailableSpawnpoints() {
         List<Vec> allSpawnpoints = map.horseSpawnpoints();
         List<Vec> availableSpawnpoints = new ArrayList<>();
@@ -62,15 +71,27 @@ public class Game {
     }
 
     public void processStep(double dt_seconds) {
-        // TODO clamp dt_nano to reasonable values
+        // TODO clamp dt_seconds to reasonable values
+
+        // Apply velocities to horses
         for (Horse horse : horses) {
             Vec vec = horse.getVec();
             vec.applyVelocity(horse.getVelocity(), dt_seconds);
         }
-        // TODO gather collision data
+
+        // Check if any horse intersects the carrots
+        Hitbox carrotHitbox = map.carrot().hitbox();
+        for (Horse horse : horses) {
+            List<Vec> intersections = horse.getAbsoluteHitbox().getIntersections(carrotHitbox);
+            if (intersections.size() <= 0) continue;
+            winner = horse.getPlayer();
+            lobby.setLobbyState(GAME_OVER);
+            gameTaskHandler.cancel(true); // stops the game from processing
+            return;
+        }
+
+        // TODO gather horse-horse and horse-wall collision data
         // TODO apply collision reflections
-        // TODO check if any horse intersect the carrots
-        // To stop game: gameTaskHandler.cancel(true);
     }
 
     public Optional<Horse> getHorse(Player player) {

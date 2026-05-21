@@ -21,7 +21,7 @@ public class GameStateUpdateScheduler {
     @Scheduled(fixedRate = 200)
     public void pushUpdates() {
         for (Lobby lobby : lobbies.getLobbies()) {
-            handler.broadcast(lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame().getHorses()));
+            handler.broadcast(lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame()));
         }
     }
 }

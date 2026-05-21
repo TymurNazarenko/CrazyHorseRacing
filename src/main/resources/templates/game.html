@@ -26,8 +26,8 @@
         status_socket.onmessage = (event) => {
             let str = event.data.toString();
             let receivedMessage = JSON.parse(str);
-            // TODO extend this socket to also broadcast game state (waiting for players/ready to play/playing/game over)
-            for (let receivedHorse of receivedMessage) {
+            // TODO also handle the "winner" state
+            for (let receivedHorse of receivedMessage.horses) {
                 let existingHorseIndex = getHorseIndex(receivedHorse.id);
                 if (existingHorseIndex === -1) {
                     console.log("New horse detected");
@@ -110,7 +110,7 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <!-- TODO position these differently so the user doesn't have to scroll -->
+    <!-- TODO position these differently so the user can't scroll -->
     <h1 style="text-align:center">Your Game</h1>
     <h4 id="gamestate" style="text-align:center"> TODO status </h4>
     <div id="game">
