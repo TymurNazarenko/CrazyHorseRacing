@@ -48,6 +48,10 @@ public class Horse {
         this.id = idCounter.getAndIncrement();
     }
 
+    public Hitbox getAbsoluteHitbox() {
+        return type.hitbox().withDisplacement(vec);
+    }
+
     private void setMoveTime() {
         lastPlayerMoveTime.set(System.nanoTime());
     }

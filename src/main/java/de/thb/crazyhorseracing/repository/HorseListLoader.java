@@ -1,4 +1,4 @@
-package de.thb.crazyhorseracing.service;
+package de.thb.crazyhorseracing.repository;
 
 import de.thb.crazyhorseracing.entity.*;
 import jakarta.annotation.PostConstruct;
@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class HorseListLoader {

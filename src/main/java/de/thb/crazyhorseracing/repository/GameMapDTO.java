@@ -1,4 +1,4 @@
-package de.thb.crazyhorseracing.entity;
+package de.thb.crazyhorseracing.repository;
 
 import java.util.List;
 

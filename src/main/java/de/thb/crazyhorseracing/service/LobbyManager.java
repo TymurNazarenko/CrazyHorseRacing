@@ -3,6 +3,7 @@ package de.thb.crazyhorseracing.service;
 import de.thb.crazyhorseracing.entity.GameMap;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
+import de.thb.crazyhorseracing.repository.GameMapListLoader;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;

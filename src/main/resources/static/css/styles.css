@@ -59,6 +59,10 @@
 #level-image {
     width: 100%;
     height: 100%;
+    object-fit: fill;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .horse {
@@ -68,6 +72,9 @@
     height: 100px;
 }
 
-
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+}
 
 

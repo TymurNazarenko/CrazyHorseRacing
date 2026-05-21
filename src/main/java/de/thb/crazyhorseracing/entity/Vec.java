@@ -11,20 +11,29 @@ public class Vec {
         this.y = y;
     }
 
+    // IM-Pure
     public void applyVelocity(Velocity velocity, double dt) { // the only non-pure function, used only for the horses
         this.x += velocity.getX() * dt;
         this.y += velocity.getY() * dt;
     }
 
+    // Pure
     public double dist(Vec other) {
         return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
     }
 
+    // Pure
     public boolean isNear(Vec other, double epsilon) {
         return dist(other) <= epsilon;
     }
 
+    // Pure
     public boolean isNear(Vec other) {
         return isNear(other, 0.01);
+    }
+
+    // Pure
+    public Vec add(Vec other) {
+        return new Vec(x + other.x, y + other.y);
     }
 }

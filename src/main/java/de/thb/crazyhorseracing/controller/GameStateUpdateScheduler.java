@@ -1,6 +1,7 @@
-package de.thb.crazyhorseracing.service;
+package de.thb.crazyhorseracing.controller;
 
 import de.thb.crazyhorseracing.entity.Lobby;
+import de.thb.crazyhorseracing.service.LobbyManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
@@ -20,7 +21,7 @@ public class GameStateUpdateScheduler {
     @Scheduled(fixedRate = 200)
     public void pushUpdates() {
         for (Lobby lobby : lobbies.getLobbies()) {
-            handler.broadcast(lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame().getHorses())); // TODO add a way to distinguish players from one another from the clientside
+            handler.broadcast(lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame().getHorses()));
         }
     }
 }

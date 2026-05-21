@@ -3,7 +3,7 @@ package de.thb.crazyhorseracing.controller;
 import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
-import de.thb.crazyhorseracing.service.HorseListLoader;
+import de.thb.crazyhorseracing.repository.HorseListLoader;
 import de.thb.crazyhorseracing.service.LobbyManager;
 import de.thb.crazyhorseracing.service.PlayerManager;
 import jakarta.servlet.http.HttpSession;

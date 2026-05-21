@@ -4,13 +4,89 @@
     <meta charset="UTF-8">
     <title>Crazy Horse Racing</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <style>
+        #game {
+            border: 3px dashed #888;
+            background: #fff;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #game.hover {
+            border-color: #333;
+            background: #fafafa;
+        }
+
+        #level-image-placeholder {
+            color: #888;
+            font-size: 24px;
+            text-align: center;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
     <h1 style="text-align:center">Level creator</h1>
     <div id="game">
-        <img id="level-image" alt="Your level image here">
+        <div id="level-image-placeholder">Drag & Drop Image Here</div>
     </div>
 </div>
+<script>
+    let levelImageName = "";
+
+    const dropArea = document.getElementById('game');
+    const placeholder = document.getElementById('level-image-placeholder');
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, e => e.preventDefault());
+    });
+
+    // Highlight on drag
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => {
+            dropArea.classList.add('hover');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => {
+            dropArea.classList.remove('hover');
+        });
+    });
+
+    // Handle drop
+    dropArea.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        if (files.length === 0) return;
+
+        const file = files[0];
+        if (!file.type.startsWith('image/')) {
+            alert('Please drop an image file.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            let img = dropArea.querySelector('img');
+
+            if (!img) {
+                img = document.createElement('img');
+                img.id = 'level-image';
+                dropArea.appendChild(img);
+            }
+
+            img.src = event.target.result;
+            placeholder.style.display = 'none';
+        };
+
+        reader.readAsDataURL(file);
+        levelImageName = file.name;
+    });
+</script>
 </body>
 </html>

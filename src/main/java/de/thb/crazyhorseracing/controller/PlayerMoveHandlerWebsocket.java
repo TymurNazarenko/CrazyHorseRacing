@@ -1,8 +1,10 @@
-package de.thb.crazyhorseracing.service;
+package de.thb.crazyhorseracing.controller;
 
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.MoveType;
 import de.thb.crazyhorseracing.entity.Player;
+import de.thb.crazyhorseracing.service.LobbyManager;
+import de.thb.crazyhorseracing.service.PlayerManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -35,8 +37,7 @@ public class PlayerMoveHandlerWebsocket extends TextWebSocketHandler {
         String payload = message.getPayload();
         try {
             MoveType moveType = MoveType.valueOf(payload);
-            lobby.getGame().doPlayerMove(player, moveType); // TODO
-            System.out.println("Received move: " + moveType); // todo remove
+            lobby.getGame().doPlayerMove(player, moveType);
         } catch (IllegalArgumentException e) {
             // TODO
             return;

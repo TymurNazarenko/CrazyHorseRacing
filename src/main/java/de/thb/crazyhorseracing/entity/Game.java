@@ -67,7 +67,6 @@ public class Game {
             Vec vec = horse.getVec();
             vec.applyVelocity(horse.getVelocity(), dt_seconds);
         }
-        // TODO apply velocities to horses
         // TODO gather collision data
         // TODO apply collision reflections
         // TODO check if any horse intersect the carrots

@@ -1,4 +1,4 @@
-package de.thb.crazyhorseracing.service;
+package de.thb.crazyhorseracing.controller;
 
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;

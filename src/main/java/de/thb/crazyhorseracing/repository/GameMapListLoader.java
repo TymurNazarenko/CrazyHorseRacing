@@ -1,4 +1,4 @@
-package de.thb.crazyhorseracing.service;
+package de.thb.crazyhorseracing.repository;
 
 import de.thb.crazyhorseracing.entity.*;
 import jakarta.annotation.PostConstruct;

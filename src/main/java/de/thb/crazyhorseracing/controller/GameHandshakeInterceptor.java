@@ -1,7 +1,9 @@
-package de.thb.crazyhorseracing.service;
+package de.thb.crazyhorseracing.controller;
 
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
+import de.thb.crazyhorseracing.service.LobbyManager;
+import de.thb.crazyhorseracing.service.PlayerManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.jspecify.annotations.NonNull;
