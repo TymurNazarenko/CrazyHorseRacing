@@ -51,6 +51,7 @@ public class HomeController {
 
         model.addAttribute("levelImage", lobby.getGame().getMap().imagePath()); // populate the game (image)
         model.addAttribute("walls", lobby.getGame().getMap().walls()); // populate the game (wall hitboxes)
+        model.addAttribute("carrot", lobby.getGame().getMap().carrot()); // populate the game (carrot)
         model.addAttribute("gameId", lobby.getId());
 
         return "game";
@@ -70,5 +71,10 @@ public class HomeController {
 
         Lobby lobby = lobbyManager.getJoinOrCreateLobby(player);
         return "redirect:/game/" + lobby.getId();
+    }
+
+    @GetMapping("/level_creator")
+    public String level_creator(Model model) {
+        return "level_creator";
     }
 }

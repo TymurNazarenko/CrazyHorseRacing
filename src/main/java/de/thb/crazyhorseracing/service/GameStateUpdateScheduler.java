@@ -17,7 +17,7 @@ public class GameStateUpdateScheduler {
         this.jsonMapper = new ObjectMapper();
     }
 
-    @Scheduled(fixedRate = 500)
+    @Scheduled(fixedRate = 200)
     public void pushUpdates() {
         for (Lobby lobby : lobbies.getLobbies()) {
             handler.broadcast(lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame().getHorses())); // TODO add a way to distinguish players from one another from the clientside

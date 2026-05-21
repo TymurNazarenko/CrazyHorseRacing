@@ -63,6 +63,10 @@ public class Game {
 
     public void processStep(double dt_seconds) {
         // TODO clamp dt_nano to reasonable values
+        for (Horse horse : horses) {
+            Vec vec = horse.getVec();
+            vec.applyVelocity(horse.getVelocity(), dt_seconds);
+        }
         // TODO apply velocities to horses
         // TODO gather collision data
         // TODO apply collision reflections

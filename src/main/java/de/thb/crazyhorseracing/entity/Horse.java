@@ -11,13 +11,13 @@ public class Horse {
     @Getter
     private static final long MOVE_DELAY_NS = 1_000_000_000;
     @Getter
-    private static final Velocity UP_VELOCITY = new Velocity(0, 1);
+    private static final Velocity UP_VELOCITY = new Velocity(0, -20);
     @Getter
-    private static final Velocity DOWN_VELOCITY = new Velocity(0, -1);
+    private static final Velocity DOWN_VELOCITY = new Velocity(0, 20);
     @Getter
-    private static final Velocity LEFT_VELOCITY = new Velocity(-1, 0);
+    private static final Velocity LEFT_VELOCITY = new Velocity(-20, 0);
     @Getter
-    private static final Velocity RIGHT_VELOCITY = new Velocity(1, 0);
+    private static final Velocity RIGHT_VELOCITY = new Velocity(20, 0);
 
     @Getter
     private static final AtomicInteger idCounter = new AtomicInteger(0);
