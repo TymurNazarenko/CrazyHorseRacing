@@ -83,15 +83,28 @@ public class Game {
         Hitbox carrotHitbox = map.carrot().hitbox();
         for (Horse horse : horses) {
             List<Vec> intersections = horse.getAbsoluteHitbox().getIntersections(carrotHitbox);
-            if (intersections.size() <= 0) continue;
-            winner = horse.getPlayer();
+            if (intersections.isEmpty()) continue;
+            winner = horse.getPlayer(); // TODO send the winner to the players
             lobby.setLobbyState(GAME_OVER);
             gameTaskHandler.cancel(true); // stops the game from processing
             return;
         }
 
-        // TODO gather horse-horse and horse-wall collision data
-        // TODO apply collision reflections
+        // Collision reflections
+        for (Horse horse : horses) {
+            Hitbox absoluteHitbox = horse.getAbsoluteHitbox();
+
+            for (Wall wall : map.walls()) {
+                Hitbox comparedHitbox = wall.hitbox();
+                horse.getVelocity().reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox), horse.getVec());
+            }
+
+            for (Horse horse2 : horses) {
+                if (horse == horse2) continue;
+                Hitbox comparedHitbox = horse2.getAbsoluteHitbox();
+                horse.getVelocity().reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox), horse.getVec());
+            }
+        }
     }
 
     public Optional<Horse> getHorse(Player player) {

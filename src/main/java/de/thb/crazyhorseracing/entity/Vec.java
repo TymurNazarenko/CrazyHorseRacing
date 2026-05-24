@@ -2,6 +2,8 @@ package de.thb.crazyhorseracing.entity;
 
 import lombok.Getter;
 
+import java.util.List;
+
 public class Vec {
     @Getter
     private double x, y;
@@ -11,7 +13,7 @@ public class Vec {
         this.y = y;
     }
 
-    // IM-Pure
+    // NOT Pure
     public void applyVelocity(Velocity velocity, double dt) { // the only non-pure function, used only for the horses
         this.x += velocity.getX() * dt;
         this.y += velocity.getY() * dt;
@@ -35,5 +37,17 @@ public class Vec {
     // Pure
     public Vec add(Vec other) {
         return new Vec(x + other.x, y + other.y);
+    }
+
+    // Pure
+    public Vec normalized() {
+        double len = Math.sqrt(x * x + y * y);
+        if (len == 0) return new Vec(0, 0);
+        return new Vec(x / len, y / len);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
     }
 }
