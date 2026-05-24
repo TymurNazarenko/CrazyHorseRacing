@@ -6,17 +6,6 @@ import java.util.List;
 public record Hitbox(List<Vec> vertices) {
     private static final double EPS = 1e-9;
 
-    // Compute orientation of ordered triplet (p, q, r)
-    // Returns:
-    // 0 -> collinear
-    // 1 -> clockwise
-    // 2 -> counterclockwise
-    private static int orientation(Vec p, Vec q, Vec r) {
-        double val = (q.getY() - p.getY()) * (r.getX() - q.getX()) - (q.getX() - p.getX()) * (r.getY() - q.getY());
-        if (Math.abs(val) < EPS) return 0; // handle floating point precision
-        return (val > 0) ? 1 : 2;
-    }
-
     // Check if point q lies on segment pr
     private static boolean onSegment(Vec p, Vec q, Vec r) {
         return q.getX() <= Math.max(p.getX(), r.getX()) && q.getX() >= Math.min(p.getX(), r.getX()) &&

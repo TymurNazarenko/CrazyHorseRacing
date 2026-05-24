@@ -38,7 +38,7 @@ public class Game {
 
     public boolean isSpawnpointAvailable(Vec spawnpoint) {
         for (Horse horse : horses) {
-            if (horse.getVec().isNear(spawnpoint)) {
+            if (horse.getPos().isNear(spawnpoint)) {
                 return false;
             }
         }
@@ -75,8 +75,8 @@ public class Game {
 
         // Apply velocities to horses
         for (Horse horse : horses) {
-            Vec vec = horse.getVec();
-            vec.applyVelocity(horse.getVel(), dt_seconds);
+            Vec vec = horse.getPos();
+            vec.applyVelocity(horse.getVelocity(), dt_seconds);
         }
 
         // Check if any horse intersects the carrots
