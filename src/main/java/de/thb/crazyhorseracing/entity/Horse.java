@@ -13,13 +13,13 @@ public class Horse {
     @Getter
     private static final long MOVE_DELAY_NS = 1_000_000_000;
     @Getter
-    private static final Velocity UP_VELOCITY = new Velocity(0, -20);
+    private static final Vel UP_VEL = new Vel(0, -20);
     @Getter
-    private static final Velocity DOWN_VELOCITY = new Velocity(0, 20);
+    private static final Vel DOWN_VEL = new Vel(0, 20);
     @Getter
-    private static final Velocity LEFT_VELOCITY = new Velocity(-20, 0);
+    private static final Vel LEFT_VEL = new Vel(-20, 0);
     @Getter
-    private static final Velocity RIGHT_VELOCITY = new Velocity(20, 0);
+    private static final Vel RIGHT_VEL = new Vel(20, 0);
 
     @Getter
     private static final AtomicInteger idCounter = new AtomicInteger(0);
@@ -36,7 +36,7 @@ public class Horse {
     private Vec vec;
     @Getter
     @Setter
-    private Velocity velocity;
+    private Vel vel;
 
     @Getter
     @JsonIgnore
@@ -46,7 +46,7 @@ public class Horse {
         this.type = type;
         this.player = player;
         this.vec = vec;
-        this.velocity = new Velocity(0,0);
+        this.vel = new Vel(0,0);
         this.id = idCounter.getAndIncrement();
     }
 
@@ -66,9 +66,14 @@ public class Horse {
                 .sorted(Comparator.comparingDouble(e -> e.dist(vec)))
                 .limit(2)
                 .toList();
+        Vec first = closestTwoIntersections.get(0);
+        Vec second = closestTwoIntersections.get(1);
+
         // Step 2: Reflect off the line made by those two collision points
-        // TODO
-        velocity.setX(0); velocity.setY(0); // This is placeholder code to just check if the collision checking even makes sense.
+        Vec intersectionLine = first.subtract(second);
+        Vec intersectionLineNormal = new Vec(-intersectionLine.getY(), intersectionLine.getX()).normalized();
+        double dot = intersectionLineNormal.dot(vel);
+        vel = new Vel(vel.subtract(intersectionLineNormal.multiply(2*dot))); // v′ = v − 2(v⋅n)n
     }
 
     private void setMoveTime() {
@@ -84,19 +89,19 @@ public class Horse {
 
         switch (moveType) {
             case MOVE_UP -> {
-                velocity.addVelocity(UP_VELOCITY);
+                vel.addVelocity(UP_VEL);
                 setMoveTime();
             }
             case MOVE_DOWN -> {
-                velocity.addVelocity(DOWN_VELOCITY);
+                vel.addVelocity(DOWN_VEL);
                 setMoveTime();
             }
             case MOVE_LEFT -> {
-                velocity.addVelocity(LEFT_VELOCITY);
+                vel.addVelocity(LEFT_VEL);
                 setMoveTime();
             }
             case MOVE_RIGHT -> {
-                velocity.addVelocity(RIGHT_VELOCITY);
+                vel.addVelocity(RIGHT_VEL);
                 setMoveTime();
             }
         }

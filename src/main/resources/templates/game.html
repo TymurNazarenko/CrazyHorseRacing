@@ -82,8 +82,8 @@
 
         function updateHorsesPositions(delta) {
             for (horse of horses) {
-                horse.vec.x = horse.vec.x + horse.velocity.x * delta;
-                horse.vec.y = horse.vec.y + horse.velocity.y * delta;
+                horse.vec.x = horse.vec.x + horse.vel.x * delta;
+                horse.vec.y = horse.vec.y + horse.vel.y * delta;
             }
             // TODO check for hitbox intersections?
         }

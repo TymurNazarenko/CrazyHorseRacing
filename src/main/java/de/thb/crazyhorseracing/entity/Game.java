@@ -76,7 +76,7 @@ public class Game {
         // Apply velocities to horses
         for (Horse horse : horses) {
             Vec vec = horse.getVec();
-            vec.applyVelocity(horse.getVelocity(), dt_seconds);
+            vec.applyVelocity(horse.getVel(), dt_seconds);
         }
 
         // Check if any horse intersects the carrots
