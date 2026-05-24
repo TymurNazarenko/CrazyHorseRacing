@@ -96,13 +96,13 @@ public class Game {
 
             for (Wall wall : map.walls()) {
                 Hitbox comparedHitbox = wall.hitbox();
-                horse.getVelocity().reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox), horse.getVec());
+                horse.reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox));
             }
 
             for (Horse horse2 : horses) {
                 if (horse == horse2) continue;
                 Hitbox comparedHitbox = horse2.getAbsoluteHitbox();
-                horse.getVelocity().reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox), horse.getVec());
+                horse.reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox));
             }
         }
     }

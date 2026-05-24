@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -50,6 +52,23 @@ public class Horse {
 
     public Hitbox getAbsoluteHitbox() {
         return type.hitbox().withDisplacement(vec);
+    }
+
+    public void reflectOnCollision(List<Vec> intersections) {
+        if (intersections.isEmpty()) return;
+        if (intersections.size() == 1) {
+            // TODO this edge-case (is it even possible? hopefully not)
+            return;
+        }
+
+        // Step 1: Find the nearest two collision points
+        List<Vec> closestTwoIntersections = intersections.stream()
+                .sorted(Comparator.comparingDouble(e -> e.dist(vec)))
+                .limit(2)
+                .toList();
+        // Step 2: Reflect off the line made by those two collision points
+        // TODO
+        velocity.setX(0); velocity.setY(0); // This is placeholder code to just check if the collision checking even makes sense.
     }
 
     private void setMoveTime() {
