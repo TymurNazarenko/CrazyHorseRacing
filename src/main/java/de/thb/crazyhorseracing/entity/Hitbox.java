@@ -71,4 +71,16 @@ public record Hitbox(List<Vec> vertices) {
         }
         return new Hitbox(new_vertices);
     }
+
+    public Vec getAlgebraicCenter() {
+        double avgX = 0;
+        double avgY = 0;
+        for (Vec vec : vertices) {
+            avgX += vec.getX();
+            avgY += vec.getY();
+        }
+        avgX /= vertices.size();
+        avgY /= vertices.size();
+        return new Vec(avgX, avgY);
+    }
 }

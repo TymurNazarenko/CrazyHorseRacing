@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Horse {
+public class Horse implements AbsoluteHitboxObject {
     @Getter
     private static final long MOVE_DELAY_NS = 1_000_000_000;
     @Getter
@@ -54,7 +54,8 @@ public class Horse {
         return type.hitbox().withDisplacement(pos);
     }
 
-    public void reflectOnCollision(List<Vec> intersections) {
+    public void reflectIfColliding(AbsoluteHitboxObject obj) {
+        List<Vec> intersections = getAbsoluteHitbox().getIntersections(obj.getAbsoluteHitbox());
         if (intersections.isEmpty()) return;
         if (intersections.size() == 1) {
             // TODO this edge-case (is it even possible? hopefully not)

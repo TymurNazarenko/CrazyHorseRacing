@@ -70,6 +70,18 @@ public class Game {
         return true;
     }
 
+    public void win(Horse winnerHorse) {
+        winner = winnerHorse.getPlayer();
+        winnerHorse.setPos(map.carrot().hitbox().getAlgebraicCenter());
+        for (Horse horse : horses) {
+            horse.setVelocity(new Vec(0,0));
+        }
+        // TODO send the winner to the players
+        lobby.setLobbyState(GAME_OVER);
+        gameTaskHandler.cancel(true); // stops the game from processing
+        // TODO destroy game automatically after some time
+    }
+
     public void processStep(double dt_seconds) {
         // TODO clamp dt_seconds to reasonable values
 
@@ -84,25 +96,19 @@ public class Game {
         for (Horse horse : horses) {
             List<Vec> intersections = horse.getAbsoluteHitbox().getIntersections(carrotHitbox);
             if (intersections.isEmpty()) continue;
-            winner = horse.getPlayer(); // TODO send the winner to the players
-            lobby.setLobbyState(GAME_OVER);
-            gameTaskHandler.cancel(true); // stops the game from processing
+            win(horse);
             return;
         }
 
         // Collision reflections
         for (Horse horse : horses) {
-            Hitbox absoluteHitbox = horse.getAbsoluteHitbox();
-
             for (Wall wall : map.walls()) {
-                Hitbox comparedHitbox = wall.hitbox();
-                horse.reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox));
+                horse.reflectIfColliding(wall);
             }
 
             for (Horse horse2 : horses) {
                 if (horse == horse2) continue;
-                Hitbox comparedHitbox = horse2.getAbsoluteHitbox();
-                horse.reflectOnCollision(absoluteHitbox.getIntersections(comparedHitbox));
+                horse.reflectIfColliding(horse2);
             }
         }
     }
