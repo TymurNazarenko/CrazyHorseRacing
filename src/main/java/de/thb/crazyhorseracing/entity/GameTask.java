@@ -42,7 +42,7 @@ public class GameTask implements Runnable {
 
     private void sleep() {
         try {
-            Thread.sleep(25); // 40 ticks/sec
+            Thread.sleep(10); // 100 ticks/sec
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
