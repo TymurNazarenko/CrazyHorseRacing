@@ -1,6 +1,7 @@
 package de.thb.crazyhorseracing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.thb.crazyhorseracing.repository.RandomSource;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,10 +31,23 @@ public class Game {
     @Setter
     private Future<?> gameTaskHandler;
 
+    @JsonIgnore
+    @Getter
+    private static final double INITIAL_RANDOM_VELOCITY = 200.0;
+
     public Game(Lobby lobby, GameMap map) {
         this.lobby = lobby;
         this.map = map;
         this.horses = new ArrayList<>();
+    }
+
+    public void start() {
+        // TODO give all horses random initial velocities
+        for (Horse horse : horses) {
+            double proportion = RandomSource.getSrc().nextDouble();
+            horse.setVelocity(new Vec(INITIAL_RANDOM_VELOCITY*proportion, INITIAL_RANDOM_VELOCITY*(1-proportion)));
+        }
+        lobby.setLobbyState(PLAYING);
     }
 
     public boolean isSpawnpointAvailable(Vec spawnpoint) {

@@ -19,7 +19,7 @@ public class GameTask implements Runnable {
 
     @Override
     public void run() {
-        game.getLobby().setLobbyState(PLAYING);
+        game.start();
         System.out.println("GameTask started.");
         long lastTime = System.nanoTime();
         while (running && !Thread.currentThread().isInterrupted()) {
@@ -42,7 +42,7 @@ public class GameTask implements Runnable {
 
     private void sleep() {
         try {
-            Thread.sleep(50); // 20 ticks/sec
+            Thread.sleep(25); // 40 ticks/sec
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

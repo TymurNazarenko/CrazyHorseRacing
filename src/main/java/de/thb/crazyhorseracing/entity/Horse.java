@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Horse implements AbsoluteHitboxObject {
     @Getter
-    private static final long MOVE_DELAY_NS = 1_000_000_000;
+    private static final long MOVE_DELAY_NS = 1_000_000_000; // 1 second
     @Getter
     private static final Vec UP_VEL = new Vec(0, -20);
     @Getter
@@ -42,6 +42,10 @@ public class Horse implements AbsoluteHitboxObject {
     @JsonIgnore
     private final AtomicLong lastPlayerMoveTime = new AtomicLong(0);
 
+    private static final long COLLISION_DELAY_NS = 200_000_000; // 0.2 seconds
+    private long lastCollisionTime = 0;
+    private AbsoluteHitboxObject lastCollisionObj = null;
+
     public Horse(HorseType type, Player player, Vec pos) {
         this.type = type;
         this.player = player;
@@ -55,6 +59,8 @@ public class Horse implements AbsoluteHitboxObject {
     }
 
     public void reflectIfColliding(AbsoluteHitboxObject obj) {
+        if (obj == lastCollisionObj && System.nanoTime() - lastCollisionTime < COLLISION_DELAY_NS) return;
+
         List<Vec> intersections = getAbsoluteHitbox().getIntersections(obj.getAbsoluteHitbox());
         if (intersections.isEmpty()) return;
         if (intersections.size() == 1) {
@@ -75,6 +81,11 @@ public class Horse implements AbsoluteHitboxObject {
         Vec intersectionLineNormal = new Vec(-intersectionLine.getY(), intersectionLine.getX()).normalized();
         double dot = intersectionLineNormal.dot(velocity);
         velocity = velocity.subtract(intersectionLineNormal.multiply(2*dot)); // v′ = v − 2(v⋅n)n
+
+        // TODO push the horse so far along the normal that it no longer collides?
+
+        lastCollisionObj = obj;
+        lastCollisionTime = System.nanoTime();
     }
 
     private void setMoveTime() {
