@@ -82,8 +82,8 @@
 
         function updateHorsesPositions(delta) {
             for (horse of horses) {
-                horse.vec.x = horse.vec.x + horse.vel.x * delta;
-                horse.vec.y = horse.vec.y + horse.vel.y * delta;
+                horse.pos.x = horse.pos.x + horse.velocity.x * delta;
+                horse.pos.y = horse.pos.y + horse.velocity.y * delta;
             }
             // TODO check for hitbox intersections?
         }
@@ -96,8 +96,8 @@
 
             // Updating the divs to match their x,y coordinates
             for (let horse of horses) {
-                horse.dom_elem.style.top = (horse.vec.y - horse.dom_elem.height/2) + "px";
-                horse.dom_elem.style.left = (horse.vec.x - horse.dom_elem.width/2) + "px";
+                horse.dom_elem.style.top = (horse.pos.y - horse.dom_elem.height/2) + "px";
+                horse.dom_elem.style.left = (horse.pos.x - horse.dom_elem.width/2) + "px";
             }
 
             updateHorsesPositions(delay);
