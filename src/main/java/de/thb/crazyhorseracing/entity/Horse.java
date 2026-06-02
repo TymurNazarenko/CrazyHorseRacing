@@ -76,6 +76,12 @@ public class Horse implements AbsoluteHitboxObject {
         Vec first = closestTwoIntersections.get(0);
         Vec second = closestTwoIntersections.get(1);
 
+        // Step 1.5: Check if velocity already points away from the intersection. We don't want to reflect the velocity in that case
+        Vec intersectionMidpoint = first.add(second).multiply(0.5);
+        Vec towardsIntersection = intersectionMidpoint.subtract(pos);
+        double angleCos = velocity.normalized().dot(towardsIntersection.normalized());
+        if (angleCos <= 0) return; // If the cos is lower than 0, the direction towards the intersection and the velocity don't point into the same general direction (and maybe point in completely different directions)
+
         // Step 2: Reflect off the line made by those two collision points
         Vec intersectionLine = first.subtract(second);
         Vec intersectionLineNormal = new Vec(-intersectionLine.getY(), intersectionLine.getX()).normalized();
