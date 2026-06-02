@@ -26,11 +26,10 @@ public class PlayerMoveHandlerWebsocket extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) {
         String jsessionId = (String) session.getAttributes().get("JSESSIONID");
-        Optional<Player> pl = players.getPlayer(jsessionId);
-        if (pl.isEmpty()) return;
-        Player player = pl.get();
+        Player player = players.getPlayer(jsessionId);
+        if (player == null) return;
 
-        Optional<Lobby> lb = lobbies.getLobby(pl.get());
+        Optional<Lobby> lb = lobbies.getLobby(player);
         if (lb.isEmpty()) return;
         Lobby lobby = lb.get();
 

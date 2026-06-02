@@ -37,8 +37,8 @@ public class GameHandshakeInterceptor implements HandshakeInterceptor {
             if (session == null) return false;
 
             String jsessionId = session.getId();
-            Optional<Player> player = players.getPlayer(jsessionId);
-            if (player.isEmpty() || !lobby.isPlayerAllowed(player.get())) return false;
+            Player player = players.getPlayer(jsessionId);
+            if (player == null || !lobby.hasPlayer(player)) return false;
 
             attributes.put("JSESSIONID", jsessionId);
             return true;

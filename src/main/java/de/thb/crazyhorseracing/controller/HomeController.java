@@ -18,20 +18,17 @@ import java.util.Optional;
 
 @Controller
 public class HomeController {
-    private final HorseTypeListLoader horseTypeListLoader;
-
     private final LobbyManager lobbyManager;
     private final PlayerManager playerManager;
 
-    public HomeController(HorseTypeListLoader horseTypeListLoader, LobbyManager lobbyManager, PlayerManager playerManager) {
-        this.horseTypeListLoader = horseTypeListLoader;
+    public HomeController(LobbyManager lobbyManager, PlayerManager playerManager) {
         this.lobbyManager = lobbyManager;
         this.playerManager = playerManager;
     }
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("horses", horseTypeListLoader.copyHorses());
+        model.addAttribute("horses", HorseTypeListLoader.getHorseTypes());
         return "home";
     }
 
@@ -45,7 +42,7 @@ public class HomeController {
         Lobby lobby = optionalLobby.get();
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
-        if (!lobby.hasPlayer(player)) {
+        if (!lobby.isPlayerAllowed(player)) {
             return "redirect:/";
         }
 
@@ -61,12 +58,11 @@ public class HomeController {
     public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, Model model, HttpSession session) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
-        Optional<HorseType> horseOptional = horseTypeListLoader.getHorseById(selectedHorseType);
-        if (horseOptional.isEmpty()) { // User selected a horse that doesn't exist
+        HorseType horseType = HorseTypeListLoader.getHorseById(selectedHorseType);
+        if (horseType == null) { // User selected a horse that doesn't exist
             model.addAttribute("error", "Invalid horse selected");
             return home(model);
         }
-        HorseType horseType = horseOptional.get();
         player.setHorseType(horseType);
 
         Lobby lobby = lobbyManager.getJoinOrCreateLobby(player);

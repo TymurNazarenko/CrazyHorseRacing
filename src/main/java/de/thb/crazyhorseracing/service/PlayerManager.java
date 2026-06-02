@@ -2,52 +2,53 @@ package de.thb.crazyhorseracing.service;
 
 import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Player;
+import de.thb.crazyhorseracing.repository.PlayerRepository;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class PlayerManager {
-    private List<Player> players;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    private List<Player> players = new ArrayList<>();
 
     @PostConstruct
-    public void init() {
-        players = new ArrayList<>();
+    private void init() {
+        players = (List<Player>) playerRepository.findAll();
     }
 
-    public Optional<Player> getPlayer(String id) {
-        for (Player player : players) {
-            if (player.getId().equals(id)) {
-                return Optional.of(player);
-            }
-        }
-        return Optional.empty();
+    public Player getPlayer(String jid) {
+        return players.stream().filter(player -> player.getJid().equals(jid)).findFirst().orElse(null);
     }
 
-    public boolean playerExists(String id) {
-        return getPlayer(id).isPresent();
+    public boolean playerExists(String jid) {
+        return getPlayer(jid) != null;
     }
 
-    private Player createPlayer(String id, HorseType horseType) {
-        Player player = new Player(id, horseType);
+    private Player createPlayer(String jid, HorseType horseType) {
+        Player player = new Player(jid, horseType);
         players.add(player);
+        playerRepository.save(player);
+        return getPlayer(jid);
+    }
+
+    private Player createPlayer(String jid) {
+        return createPlayer(jid, null);
+    }
+
+    public Player getOrCreatePlayer(String jid, HorseType horseType) {
+        Player player = getPlayer(jid);
+        if (player == null) player = createPlayer(jid, horseType);
         return player;
     }
 
-    private Player createPlayer(String id) {
-        Player player = new Player(id);
-        players.add(player);
-        return player;
-    }
-
-    public Player getOrCreatePlayer(String id, HorseType horseType) {
-        return getPlayer(id).orElseGet(() -> createPlayer(id, horseType));
-    }
-
-    public Player getOrCreatePlayer(String id) {
-        return getPlayer(id).orElseGet(() -> createPlayer(id));
+    public Player getOrCreatePlayer(String jid) {
+        return getOrCreatePlayer(jid, null);
     }
 }

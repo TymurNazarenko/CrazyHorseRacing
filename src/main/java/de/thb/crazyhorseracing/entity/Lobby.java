@@ -53,6 +53,9 @@ public class Lobby {
         if (maxPlayers < minPlayers) {
             throw new IllegalArgumentException("maxPlayers must be at least as large as minPlayers");
         }
+        if (maxPlayers >= gameMap.maxPlayers()) {
+            throw new IllegalArgumentException("maxPlayers can't exceed the maxPlayers of the map!");
+        }
 
         this.id = idCounter.incrementAndGet();
         this.executor = executor;
@@ -73,7 +76,7 @@ public class Lobby {
         if (lobbyState == PLAYING || lobbyState == GAME_OVER) return false;
         if (hasPlayer(player)) return false;
         if (players.size() >= maxPlayers) return false; // if this case occurs, there is an error in the logic
-        if (player.getHorseType().isEmpty()) return false;
+        if (player.getHorseType() == null) return false;
         return true;
     }
 
