@@ -18,7 +18,9 @@ public class Lobby {
     @Getter
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     @Getter
-    private static final long timerDelayMillis = 5000;
+    private static final long gameBeginningTimerDelayMillis = 5000;
+    @Getter
+    private static final long gameEndingTimerDelayMillis = 3000;
     @Getter
     private final int id;
     @Getter
@@ -73,7 +75,7 @@ public class Lobby {
     }
 
     public boolean canAddPlayer(Player player) {
-        if (lobbyState == PLAYING || lobbyState == GAME_OVER) return false;
+        if (lobbyState != WAITING_FOR_PLAYERS && lobbyState != READY_TO_PLAY) return false;
         if (hasPlayer(player)) return false;
         if (players.size() >= maxPlayers) return false; // if this case occurs, there is an error in the logic
         if (player.getHorseType() == null) return false;
@@ -87,7 +89,7 @@ public class Lobby {
 
         if (lobbyState == WAITING_FOR_PLAYERS && players.size() >= minPlayers) {
             lobbyState = READY_TO_PLAY;
-            startGameTimer();
+            startGameBeginningTimer();
         }
 
         return true;
@@ -105,7 +107,7 @@ public class Lobby {
 
         if (lobbyState == READY_TO_PLAY && players.size() < minPlayers) {
             lobbyState = WAITING_FOR_PLAYERS;
-            stopGameTimer();
+            stopGameBeginningTimer();
         }
 
         return true;
@@ -120,6 +122,7 @@ public class Lobby {
     }
 
     private synchronized void startGame(ThreadPoolTaskExecutor executor) {
+        if (lobbyState != READY_TO_PLAY) return;
         if (gameTaskFuture != null && !gameTaskFuture.isDone()) return;
 
         gameTask = new GameTask(game);
@@ -127,17 +130,31 @@ public class Lobby {
         game.setGameTaskHandler(gameTaskFuture);
     }
 
-    public synchronized void startGameTimer() {
-        if (lobbyState != READY_TO_PLAY) return;
-        stopGameTimer();
+    private synchronized void stopGame() {
+        lobbyState = TO_BE_DELETED;
+        // TODO delete lobby from LobbyManager
+        // TODO redirect the players to the main page
+    }
 
-        gameTimerTaskFuture = scheduler.schedule(
-                () -> startGame(executor),
-                new Date(System.currentTimeMillis() + timerDelayMillis)
+    public synchronized void startGameEndingTimer() {
+        if (lobbyState != GAME_OVER) return;
+        scheduler.schedule(
+            () -> stopGame(),
+            new Date(System.currentTimeMillis() + gameEndingTimerDelayMillis)
         );
     }
 
-    public synchronized void stopGameTimer() {
+    public synchronized void startGameBeginningTimer() {
+        if (lobbyState != READY_TO_PLAY) return;
+        stopGameBeginningTimer();
+
+        gameTimerTaskFuture = scheduler.schedule(
+            () -> startGame(executor),
+            new Date(System.currentTimeMillis() + gameBeginningTimerDelayMillis)
+        );
+    }
+
+    public synchronized void stopGameBeginningTimer() {
         if (gameTimerTaskFuture == null) return;
         gameTimerTaskFuture.cancel(false);
         gameTimerTaskFuture = null;

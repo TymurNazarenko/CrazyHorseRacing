@@ -54,6 +54,7 @@ public class GameTask implements Runnable {
 
     private void onStop() {
         game.getLobby().setLobbyState(GAME_OVER);
+        game.getLobby().startGameEndingTimer();
         System.out.println("GameTask stopped.");
     }
 }

@@ -4,5 +4,6 @@ public enum LobbyState {
     WAITING_FOR_PLAYERS,
     READY_TO_PLAY,
     PLAYING,
-    GAME_OVER;
+    GAME_OVER,
+    TO_BE_DELETED;
 }
