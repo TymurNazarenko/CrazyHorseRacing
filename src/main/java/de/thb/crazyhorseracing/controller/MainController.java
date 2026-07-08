@@ -20,15 +20,17 @@ import java.util.Optional;
 public class MainController {
     private final LobbyManager lobbyManager;
     private final PlayerManager playerManager;
+    private final HorseTypeProvider horseTypeProvider;
 
-    public MainController(LobbyManager lobbyManager, PlayerManager playerManager) {
+    public MainController(LobbyManager lobbyManager, PlayerManager playerManager, HorseTypeProvider horseTypeProvider) {
         this.lobbyManager = lobbyManager;
         this.playerManager = playerManager;
+        this.horseTypeProvider = horseTypeProvider;
     }
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("horses", HorseTypeProvider.getHorseTypes());
+        model.addAttribute("horses", horseTypeProvider.getHorseTypes());
         return "home";
     }
 
@@ -58,7 +60,7 @@ public class MainController {
     public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, Model model, HttpSession session) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
-        HorseType horseType = HorseTypeProvider.getHorseById(selectedHorseType);
+        HorseType horseType = horseTypeProvider.getHorseById(selectedHorseType);
         if (horseType == null) { // User selected a horse that doesn't exist
             model.addAttribute("error", "Invalid horse selected");
             return home(model);

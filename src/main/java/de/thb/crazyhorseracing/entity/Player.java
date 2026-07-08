@@ -11,6 +11,11 @@ import lombok.Setter;
 public class Player {
     @Getter
     @Setter
+    @JsonIgnore
+    private static HorseType defaultHorseType;
+
+    @Getter
+    @Setter
     @Id
     @JsonIgnore
     private String jid;
@@ -38,7 +43,7 @@ public class Player {
         if (selectedHorseType != null) {
             this.horseType = selectedHorseType;
         } else {
-            this.horseType = HorseTypeProvider.getHorseById(1);
+            this.horseType = defaultHorseType;
         }
         this.username = "ducky momo"; // TODO generate randomly
     }

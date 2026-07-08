@@ -1,6 +1,8 @@
 package de.thb.crazyhorseracing.repository;
 
 import de.thb.crazyhorseracing.entity.*;
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -9,20 +11,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+@Component
 public class HorseTypeProvider {
-    private static final ObjectMapper jsonMapper  = new ObjectMapper();
-    private static List<HorseType> horseTypes = new ArrayList<>();
-    private static boolean loaded = false;
+    private ObjectMapper jsonMapper;
+    private List<HorseType> horseTypes;
 
-    public static HorseType parseFile(String content) {
+    public HorseType parseFile(String content) {
         // TODO throw exceptions here (when format is wrong), also handle them in the loop
         HorseTypeDTO horseTypeRaw = jsonMapper.readValue(content, HorseTypeDTO.class);
         HorseType horseType = HorseTypeMapper.toDomain(horseTypeRaw);
         return horseType;
     }
 
-    private static void init() {
-        if (loaded) return; loaded = true;
+    @PostConstruct
+    public void init() {
+        jsonMapper = new ObjectMapper();
+        horseTypes = new ArrayList<>();
 
         File dir = new File("./src/main/resources/horse_types");
         File[] directoryListing = dir.listFiles();
@@ -47,14 +51,16 @@ public class HorseTypeProvider {
         }
 
         System.out.println("Loaded " + horseTypes.size() + " horse types");
+
+        if (!horseTypes.isEmpty()) {
+            Player.setDefaultHorseType(getHorseById(1));
+        }
     }
-    public static HorseType getHorseById(long id) {
-        if (!loaded) init();
+    public HorseType getHorseById(long id) {
         return horseTypes.stream().filter(h -> h.id() == id).findFirst().orElseGet(() -> null);
     }
 
-    public static List<HorseType> getHorseTypes() { // returns a shallow copy of the horses array. We don't return the original array to prevent manipulation of the list
-        if (!loaded) init();
+    public List<HorseType> getHorseTypes() { // returns a shallow copy of the horses array. We don't return the original array to prevent manipulation of the list
         return new ArrayList<>(horseTypes);
     }
 }
