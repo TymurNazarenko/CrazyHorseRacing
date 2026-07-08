@@ -3,7 +3,7 @@ package de.thb.crazyhorseracing.controller;
 import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
-import de.thb.crazyhorseracing.repository.HorseTypeListLoader;
+import de.thb.crazyhorseracing.repository.HorseTypeProvider;
 import de.thb.crazyhorseracing.service.LobbyManager;
 import de.thb.crazyhorseracing.service.PlayerManager;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +28,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("horses", HorseTypeListLoader.getHorseTypes());
+        model.addAttribute("horses", HorseTypeProvider.getHorseTypes());
         return "home";
     }
 
@@ -58,7 +58,7 @@ public class HomeController {
     public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, Model model, HttpSession session) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
-        HorseType horseType = HorseTypeListLoader.getHorseById(selectedHorseType);
+        HorseType horseType = HorseTypeProvider.getHorseById(selectedHorseType);
         if (horseType == null) { // User selected a horse that doesn't exist
             model.addAttribute("error", "Invalid horse selected");
             return home(model);

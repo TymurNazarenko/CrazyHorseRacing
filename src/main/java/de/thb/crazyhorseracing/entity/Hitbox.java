@@ -4,6 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record Hitbox(List<Vec> vertices) {
+    public Hitbox withDisplacement(Vec displacement) {
+        ArrayList<Vec> new_vertices = new ArrayList<>();
+        for (Vec vec : vertices) {
+            new_vertices.add(vec.add(displacement));
+        }
+        return new Hitbox(new_vertices);
+    }
+
+    public Vec getAlgebraicCenter() {
+        double avgX = 0;
+        double avgY = 0;
+        for (Vec vec : vertices) {
+            avgX += vec.getX();
+            avgY += vec.getY();
+        }
+        avgX /= vertices.size();
+        avgY /= vertices.size();
+        return new Vec(avgX, avgY);
+    }
     private static final double EPS = 1e-9;
 
     // Check if point q lies on segment pr
@@ -12,7 +31,7 @@ public record Hitbox(List<Vec> vertices) {
                 q.getY() <= Math.max(p.getY(), r.getY()) && q.getY() >= Math.min(p.getY(), r.getY());
     }
 
-    private Vec getIntersection(Vec p1, Vec p2, Vec p3, Vec p4) {
+    private static Vec getIntersection(Vec p1, Vec p2, Vec p3, Vec p4) {
         double A1 = p2.getY() - p1.getY();
         double B1 = p1.getX() - p2.getX();
         double C1 = A1 * p1.getX() + B1 * p1.getY();
@@ -45,42 +64,19 @@ public record Hitbox(List<Vec> vertices) {
         return null;
     }
 
-    // Returns the points where the hitboxes intersect
-    public List<Vec> getIntersections(Hitbox hitbox) {
+    public static List<Vec> getIntersections(Hitbox a, Hitbox b) {
         ArrayList<Vec> intersections = new ArrayList<>();
-        for (int i = 0; i <= vertices.size() - 1; i++) {
-            Vec own_p1 = vertices.get(i);
-            Vec own_p2 = vertices.get((i+1) % vertices.size());
-
-            for (int j = 0; j < hitbox.vertices().size(); j++) {
-                Vec other_p1 = hitbox.vertices().get(j);
-                Vec other_p2 = hitbox.vertices().get((j+1) % hitbox.vertices().size());
-                Vec intersection = getIntersection(own_p1, own_p2, other_p1, other_p2);
+        for (int i = 0; i <= a.vertices().size() - 1; i++) {
+            Vec a_p1 = a.vertices().get(i);
+            Vec a_p2 = a.vertices().get((i+1) % a.vertices.size());
+            for (int j = 0; j < b.vertices().size(); j++) {
+                Vec b_p1 = b.vertices().get(j);
+                Vec b_p2 = b.vertices().get((j+1) % b.vertices().size());
+                Vec intersection = getIntersection(a_p1, a_p2, b_p1, b_p2);
                 if (intersection == null) continue;
                 intersections.add(intersection);
             }
         }
         return intersections;
-    }
-
-    // Pure
-    public Hitbox withDisplacement(Vec displacement) {
-        ArrayList<Vec> new_vertices = new ArrayList<>();
-        for (Vec vec : vertices) {
-            new_vertices.add(vec.add(displacement));
-        }
-        return new Hitbox(new_vertices);
-    }
-
-    public Vec getAlgebraicCenter() {
-        double avgX = 0;
-        double avgY = 0;
-        for (Vec vec : vertices) {
-            avgX += vec.getX();
-            avgY += vec.getY();
-        }
-        avgX /= vertices.size();
-        avgY /= vertices.size();
-        return new Vec(avgX, avgY);
     }
 }

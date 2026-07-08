@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class HorseTypeListLoader {
+public class HorseTypeProvider {
     private static final ObjectMapper jsonMapper  = new ObjectMapper();
     private static List<HorseType> horseTypes = new ArrayList<>();
     private static boolean loaded = false;

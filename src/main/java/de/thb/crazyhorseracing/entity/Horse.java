@@ -61,7 +61,7 @@ public class Horse implements AbsoluteHitboxObject {
     public void reflectIfColliding(AbsoluteHitboxObject obj) {
         if (obj == lastCollisionObj && System.nanoTime() - lastCollisionTime < COLLISION_DELAY_NS) return;
 
-        List<Vec> intersections = getAbsoluteHitbox().getIntersections(obj.getAbsoluteHitbox());
+        List<Vec> intersections = Hitbox.getIntersections(getAbsoluteHitbox(), obj.getAbsoluteHitbox());
         if (intersections.isEmpty()) return;
         if (intersections.size() == 1) {
             // TODO this edge-case (is it even possible? hopefully not)

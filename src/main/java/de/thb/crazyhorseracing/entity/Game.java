@@ -108,7 +108,7 @@ public class Game {
         // Check if any horse intersects the carrots
         Hitbox carrotHitbox = map.carrot().hitbox();
         for (Horse horse : horses) {
-            List<Vec> intersections = horse.getAbsoluteHitbox().getIntersections(carrotHitbox);
+            List<Vec> intersections = Hitbox.getIntersections(horse.getAbsoluteHitbox(), carrotHitbox);
             if (intersections.isEmpty()) continue;
             win(horse);
             return;

@@ -1,7 +1,7 @@
 package de.thb.crazyhorseracing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.thb.crazyhorseracing.repository.HorseTypeListLoader;
+import de.thb.crazyhorseracing.repository.HorseTypeProvider;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NonNull;
@@ -38,7 +38,7 @@ public class Player {
         if (selectedHorseType != null) {
             this.horseType = selectedHorseType;
         } else {
-            this.horseType = HorseTypeListLoader.getHorseById(1);
+            this.horseType = HorseTypeProvider.getHorseById(1);
         }
         this.username = "ducky momo"; // TODO generate randomly
     }

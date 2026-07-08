@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class GameMapListLoader {
+public class GameMapProvider {
     @Getter
     private List<GameMap> maps;
     private ObjectMapper jsonMapper;

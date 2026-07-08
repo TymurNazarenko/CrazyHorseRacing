@@ -3,7 +3,7 @@ package de.thb.crazyhorseracing.service;
 import de.thb.crazyhorseracing.entity.GameMap;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
-import de.thb.crazyhorseracing.repository.GameMapListLoader;
+import de.thb.crazyhorseracing.repository.GameMapProvider;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
@@ -21,9 +21,9 @@ public class LobbyManager {
     @Autowired
     private TaskScheduler scheduler;
     private List<Lobby> lobbies;
-    private final GameMapListLoader maps;
+    private final GameMapProvider maps;
 
-    public LobbyManager(GameMapListLoader maps) {
+    public LobbyManager(GameMapProvider maps) {
         this.maps = maps;
     }
 
