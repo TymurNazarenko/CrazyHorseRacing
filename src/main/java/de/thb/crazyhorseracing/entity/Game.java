@@ -42,7 +42,7 @@ public class Game {
     }
 
     public void start() {
-        // TODO give all horses random initial velocities
+        // TODO give all horses random initial velocities (currently it only pushes them into positive x and y)
         for (Horse horse : horses) {
             double proportion = RandomSource.getSrc().nextDouble();
             horse.setVelocity(new Vec(INITIAL_RANDOM_VELOCITY*proportion, INITIAL_RANDOM_VELOCITY*(1-proportion)));

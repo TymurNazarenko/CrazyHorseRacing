@@ -16,7 +16,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.Map;
 import java.util.Optional;
 
-public class GameHandshakeInterceptor implements HandshakeInterceptor {
+public class PlayerMoveAuthenticator implements HandshakeInterceptor {
     private final LobbyManager lobbies;
     private final PlayerManager players;
     @Override
@@ -47,7 +47,7 @@ public class GameHandshakeInterceptor implements HandshakeInterceptor {
         }
     }
 
-    public GameHandshakeInterceptor(LobbyManager lobbies, PlayerManager players) {
+    public PlayerMoveAuthenticator(LobbyManager lobbies, PlayerManager players) {
         this.lobbies = lobbies;
         this.players = players;
     }

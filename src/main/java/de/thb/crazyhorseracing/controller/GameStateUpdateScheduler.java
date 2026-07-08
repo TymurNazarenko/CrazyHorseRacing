@@ -8,11 +8,11 @@ import tools.jackson.databind.ObjectMapper;
 
 @Component
 public class GameStateUpdateScheduler {
-    private final GameStateUpdaterWebSocket handler;
+    private final GameStateUpdateWS handler;
     private final LobbyManager lobbies;
     private final ObjectMapper jsonMapper;
 
-    public GameStateUpdateScheduler(GameStateUpdaterWebSocket handler, LobbyManager lobbies) {
+    public GameStateUpdateScheduler(GameStateUpdateWS handler, LobbyManager lobbies) {
         this.handler = handler;
         this.lobbies = lobbies;
         this.jsonMapper = new ObjectMapper();

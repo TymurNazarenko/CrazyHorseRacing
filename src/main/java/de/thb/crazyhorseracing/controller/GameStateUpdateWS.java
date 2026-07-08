@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class GameStateUpdaterWebSocket extends TextWebSocketHandler {
+public class GameStateUpdateWS extends TextWebSocketHandler {
     // gameId → sessions
     private final Map<Integer, Set<WebSocketSession>> gameSessions = new ConcurrentHashMap<>();
 

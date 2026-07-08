@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @Controller
-public class HomeController {
+public class MainController {
     private final LobbyManager lobbyManager;
     private final PlayerManager playerManager;
 
-    public HomeController(LobbyManager lobbyManager, PlayerManager playerManager) {
+    public MainController(LobbyManager lobbyManager, PlayerManager playerManager) {
         this.lobbyManager = lobbyManager;
         this.playerManager = playerManager;
     }

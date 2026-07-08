@@ -14,11 +14,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.util.Optional;
 
 @Component
-public class PlayerMoveHandlerWebsocket extends TextWebSocketHandler {
+public class PlayerMoveHandlerWS extends TextWebSocketHandler {
     private final LobbyManager lobbies;
     private final PlayerManager players;
 
-    public  PlayerMoveHandlerWebsocket(LobbyManager lobbies, PlayerManager players) {
+    public PlayerMoveHandlerWS(LobbyManager lobbies, PlayerManager players) {
         this.lobbies = lobbies;
         this.players = players;
     }
