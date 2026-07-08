@@ -48,9 +48,9 @@ public class MainController {
             return "redirect:/";
         }
 
-        model.addAttribute("levelImage", lobby.getGame().getMap().imagePath()); // populate the game (image)
-        model.addAttribute("walls", lobby.getGame().getMap().walls()); // populate the game (wall hitboxes)
-        model.addAttribute("carrot", lobby.getGame().getMap().carrot()); // populate the game (carrot)
+        model.addAttribute("levelImage", lobby.getGame().map.imagePath()); // populate the game (image)
+        model.addAttribute("walls", lobby.getGame().map.walls()); // populate the game (wall hitboxes)
+        model.addAttribute("carrot", lobby.getGame().map.carrot()); // populate the game (carrot)
         model.addAttribute("gameId", lobby.getId());
 
         return "game";

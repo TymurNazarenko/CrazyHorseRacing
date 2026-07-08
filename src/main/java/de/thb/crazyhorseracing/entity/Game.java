@@ -1,6 +1,7 @@
 package de.thb.crazyhorseracing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import de.thb.crazyhorseracing.repository.RandomSource;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,27 +14,20 @@ import java.util.concurrent.Future;
 import static de.thb.crazyhorseracing.entity.LobbyState.GAME_OVER;
 import static de.thb.crazyhorseracing.entity.LobbyState.PLAYING;
 
+@JsonIncludeProperties({"horses", "winner"})
 public class Game {
-    @JsonIgnore
-    @Getter
-    private final Lobby lobby; // needed to communicate game state back to the lobby
-    @Getter
-    private final List<Horse> horses;
-    @JsonIgnore
-    @Getter
-    private final GameMap map;
+    public static final double INITIAL_RANDOM_VELOCITY = 200.0;
+
+    public final Lobby lobby; // needed to communicate game state back to the lobby
+    public final List<Horse> horses;
+    public final GameMap map;
 
     @Getter
     private Player winner = null;
 
-    @JsonIgnore
     @Getter
     @Setter
     private Future<?> gameTaskHandler;
-
-    @JsonIgnore
-    @Getter
-    private static final double INITIAL_RANDOM_VELOCITY = 200.0;
 
     public Game(Lobby lobby, GameMap map) {
         this.lobby = lobby;
@@ -85,7 +79,7 @@ public class Game {
     }
 
     public void win(Horse winnerHorse) {
-        winner = winnerHorse.getPlayer();
+        winner = winnerHorse.player;
         winnerHorse.setPos(map.carrot().hitbox().getAlgebraicCenter());
         for (Horse horse : horses) {
             horse.setVelocity(new Vec(0,0));
@@ -129,7 +123,7 @@ public class Game {
 
     public Optional<Horse> getHorse(Player player) {
         for  (Horse horse : horses) {
-            if (horse.getPlayer().equals(player)) {
+            if (horse.player.equals(player)) {
                 return Optional.of(horse);
             }
         }

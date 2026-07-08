@@ -1,6 +1,7 @@
 package de.thb.crazyhorseracing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,27 +10,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+@JsonIncludeProperties({"id", "type", "player", "pos", "velocity"})
 public class Horse implements AbsoluteHitboxObject {
-    @Getter
-    private static final long MOVE_DELAY_NS = 1_000_000_000; // 1 second
-    @Getter
-    private static final Vec UP_VEL = new Vec(0, -20);
-    @Getter
-    private static final Vec DOWN_VEL = new Vec(0, 20);
-    @Getter
-    private static final Vec LEFT_VEL = new Vec(-20, 0);
-    @Getter
-    private static final Vec RIGHT_VEL = new Vec(20, 0);
+    public static final long MOVE_DELAY_NS = 1_000_000_000; // 1 second
+    public static final Vec UP_VEL = new Vec(0, -20);
+    public static final Vec DOWN_VEL = new Vec(0, 20);
+    public static final Vec LEFT_VEL = new Vec(-20, 0);
+    public static final Vec RIGHT_VEL = new Vec(20, 0);
+    public static final long COLLISION_DELAY_NS = 200_000_000; // 0.2 seconds
 
-    @Getter
-    private static final AtomicInteger idCounter = new AtomicInteger(0);
-    @Getter
-    private final int id;
+    public static final AtomicInteger idCounter = new AtomicInteger(0);
+    public final int id;
 
-    @Getter
-    private final HorseType type;
-    @Getter
-    private final Player player;
+    public final HorseType type;
+    public final Player player;
 
     @Getter
     @Setter
@@ -38,11 +32,7 @@ public class Horse implements AbsoluteHitboxObject {
     @Setter
     private Vec velocity;
 
-    @Getter
-    @JsonIgnore
-    private final AtomicLong lastPlayerMoveTime = new AtomicLong(0);
-
-    private static final long COLLISION_DELAY_NS = 200_000_000; // 0.2 seconds
+    public final AtomicLong lastPlayerMoveTime = new AtomicLong(0);
     private long lastCollisionTime = 0;
     private AbsoluteHitboxObject lastCollisionObj = null;
 

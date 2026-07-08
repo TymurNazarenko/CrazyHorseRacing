@@ -1,6 +1,7 @@
 package de.thb.crazyhorseracing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import de.thb.crazyhorseracing.repository.HorseTypeProvider;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,16 +9,15 @@ import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
+@JsonIncludeProperties({"username", "horseType"})
 public class Player {
     @Getter
     @Setter
-    @JsonIgnore
     private static HorseType defaultHorseType;
 
     @Getter
     @Setter
     @Id
-    @JsonIgnore
     private String jid;
 
     @Getter
@@ -25,17 +25,14 @@ public class Player {
     private String username; // anonymous username to differentiate players
 
     @Getter
-    @JsonIgnore
     @Transient
     private HorseType horseType;
 
     @Getter
     @Setter
-    @JsonIgnore
     private int wins = 0;
     @Getter
     @Setter
-    @JsonIgnore
     private int playedGames = 0;
 
     public Player(String jid, HorseType selectedHorseType) {
