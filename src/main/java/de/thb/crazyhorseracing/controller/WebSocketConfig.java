@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(updater_handler, "/ws/game/*/status").addInterceptors(new PlayerMoveAuthenticator(lobbies, players)).setAllowedOrigins("*");
+        registry.addHandler(updater_handler, "/ws/game/*/status").setAllowedOrigins("*");
         registry.addHandler(move_handler, "/ws/game/*/move").addInterceptors(new PlayerMoveAuthenticator(lobbies, players)).setAllowedOrigins("*");
     }
 }
