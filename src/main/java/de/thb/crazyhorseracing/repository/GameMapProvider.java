@@ -20,7 +20,6 @@ public class GameMapProvider {
     private ObjectMapper jsonMapper;
 
     public GameMap parseFile(String content) {
-        // TODO throw exceptions here (when format is wrong) and handle them in the loop
         GameMapDTO levelRaw = jsonMapper.readValue(content, GameMapDTO.class);
         GameMap level = GameMapDTOMapper.toDomain(levelRaw);
         return level;
@@ -28,8 +27,8 @@ public class GameMapProvider {
 
     @PostConstruct
     public void init() {
-        maps = new ArrayList<>();
         jsonMapper = new ObjectMapper();
+        maps = new ArrayList<>();
 
         File dir = new File("./src/main/resources/levels");
         File[] directoryListing = dir.listFiles();

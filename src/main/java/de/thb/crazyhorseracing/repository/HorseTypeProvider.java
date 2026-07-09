@@ -19,7 +19,6 @@ public class HorseTypeProvider {
     private ObjectMapper jsonMapper;
 
     public HorseType parseFile(String content) {
-        // TODO throw exceptions here (when format is wrong), also handle them in the loop
         HorseTypeDTO horseTypeRaw = jsonMapper.readValue(content, HorseTypeDTO.class);
         HorseType horseType = HorseTypeDTOMapper.toDomain(horseTypeRaw);
         return horseType;
