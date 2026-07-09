@@ -49,6 +49,7 @@ public class MainController {
         model.addAttribute("walls", lobby.getGame().map.walls()); // populate the game (wall hitboxes)
         model.addAttribute("carrot", lobby.getGame().map.carrot()); // populate the game (carrot)
         model.addAttribute("gameId", lobby.getId());
+        model.addAttribute("UUID", player.getUUID());
 
         return "game";
     }

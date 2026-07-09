@@ -10,6 +10,7 @@
         let wallHitboxes = [[${walls}]];
         let carrotHitbox = [[${carrot}]];
         let gameId = [[${gameId}]];
+        let myUUID = [[${UUID}]];
         const horses = [];
         let gameover = false;
 
@@ -51,9 +52,16 @@
 
             if (!gameover && message.winner !== null) {
                 gameover = true;
-                // TODO figure out if the winner is ourselves or not
-                console.log(message.winner.username + " wins!");
-                // TODO actual game over/you win screen
+                // Figure out if the winner is ourselves or not
+                let I_Win = message.winner.UUID == myUUID;
+                if (I_Win) {
+                    // TODO actual "you win" screen and effect
+                    console.log("You Win!");
+                } else {
+                    // TODO actual "you lose" screen and effect
+                    console.log("You Lose!");
+                    console.log(message.winner.username + " wins!");
+                }
             }
         };
 
