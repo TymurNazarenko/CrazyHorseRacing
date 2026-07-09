@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Level Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "maxPlayers",
+    "imagePath",
+    "carrot",
+    "spawnpoints",
+    "walls"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "maxPlayers": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "imagePath": {
+      "type": "string"
+    },
+    "carrot": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/vec"
+      }
+    },
+    "spawnpoints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/vec"
+      }
+    },
+    "walls": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hitbox"
+      }
+    }
+  },
+  "$defs": {
+    "vec": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "hitbox": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/vec"
+      }
+    }
+  }
+}
