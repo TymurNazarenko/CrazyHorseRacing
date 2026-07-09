@@ -75,7 +75,8 @@ public class Game {
         List<Vec> spawnpoints = getAvailableSpawnpoints();
         if  (spawnpoints.isEmpty()) return false;
 
-        Vec chosenSpawnpoint = spawnpoints.get(0); // TODO choose randomly
+        // Choose a random spawnpoint
+        Vec chosenSpawnpoint = spawnpoints.get(RandomService.nextInt(spawnpoints.size()));
         HorseType horseType = player.getHorseType();
         horses.add(new Horse(horseType, player, chosenSpawnpoint));
 
