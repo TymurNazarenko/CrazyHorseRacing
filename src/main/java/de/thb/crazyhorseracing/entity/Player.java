@@ -1,8 +1,7 @@
 package de.thb.crazyhorseracing.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import de.thb.crazyhorseracing.repository.HorseTypeProvider;
+import de.thb.crazyhorseracing.service.RandomNameGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NonNull;
@@ -37,12 +36,8 @@ public class Player {
 
     public Player(String jid, HorseType selectedHorseType) {
         this.jid = jid;
-        if (selectedHorseType != null) {
-            this.horseType = selectedHorseType;
-        } else {
-            this.horseType = defaultHorseType;
-        }
-        this.username = "ducky momo"; // TODO generate randomly
+        this.horseType = (selectedHorseType != null) ? selectedHorseType : defaultHorseType;
+        this.username = RandomNameGenerator.generateRandomName();
     }
 
     public Player(String jid) {
