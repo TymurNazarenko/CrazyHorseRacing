@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.*;
 
@@ -29,6 +30,7 @@ public class Lobby {
     private static final long gameBeginningTimerDelayMillis = 5000;
     @Getter
     private static final long gameEndingTimerDelayMillis = 3000;
+
     @Getter
     private final int id;
     @Getter
@@ -39,6 +41,7 @@ public class Lobby {
     private final List<Player> players;
     @Getter
     private final Game game;
+
     @Getter
     @Setter
     private LobbyState state = WAITING_FOR_PLAYERS;
@@ -56,7 +59,9 @@ public class Lobby {
     @Getter
     private Future<?> gameTaskFuture;
 
-    public Lobby(int minPlayers, int maxPlayers, Player player, GameMap gameMap, ThreadPoolTaskExecutor executor, TaskScheduler scheduler) {
+    public final Consumer<Lobby> destroyCallback;
+
+    public Lobby(int minPlayers, int maxPlayers, Player player, GameMap gameMap, ThreadPoolTaskExecutor executor, TaskScheduler scheduler, Consumer<Lobby> destroyCallback) {
         if (minPlayers <= 1 || maxPlayers <= 1) {
             throw new IllegalArgumentException("minPlayers and maxPlayers must be greater than 1");
         }
@@ -70,16 +75,13 @@ public class Lobby {
         this.id = idCounter.incrementAndGet();
         this.executor = executor;
         this.scheduler = scheduler;
+        this.destroyCallback = destroyCallback;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
         players = new ArrayList<>();
         players.add(player);
         this.game = new Game(this, gameMap);
         game.addHorse(player);
-    }
-
-    public Lobby(int playerNum, Player player, GameMap gameMap, ThreadPoolTaskExecutor executor, TaskScheduler scheduler) {
-        this(playerNum, playerNum, player, gameMap, executor, scheduler);
     }
 
     public boolean canAddPlayer(Player player) {
@@ -147,8 +149,7 @@ public class Lobby {
         if (winner != null) winner.addWin();
 
         state = TO_BE_DELETED;
-        // TODO delete lobby from LobbyManager
-        // TODO redirect the players to the main page
+        destroyCallback.accept(this);
     }
 
     public synchronized void startGameEndingTimer() {

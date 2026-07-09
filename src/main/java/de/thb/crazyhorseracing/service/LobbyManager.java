@@ -54,7 +54,7 @@ public class LobbyManager {
     private Lobby createLobby(int minPlayers, int maxPlayers, Player player, GameMap gameMap) {
         minPlayers = Math.min(minPlayers, gameMap.maxPlayers());
         maxPlayers = Math.min(maxPlayers, gameMap.maxPlayers());
-        Lobby lobby = new Lobby(minPlayers, maxPlayers, player, gameMap, executor, scheduler);
+        Lobby lobby = new Lobby(minPlayers, maxPlayers, player, gameMap, executor, scheduler, this::removeLobby);
         lobbies.add(lobby);
         return lobby;
     }
@@ -81,5 +81,10 @@ public class LobbyManager {
 
     public List<Lobby> getLobbies() {
         return new ArrayList<>(lobbies);
+    }
+
+    public void removeLobby(Lobby lobby) {
+        lobbies.remove(lobby);
+        // TODO automatically redirect the players to the main page?
     }
 }
