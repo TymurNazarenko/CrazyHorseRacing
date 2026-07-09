@@ -3,8 +3,7 @@ package de.thb.crazyhorseracing.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import static de.thb.crazyhorseracing.entity.LobbyState.GAME_OVER;
-import static de.thb.crazyhorseracing.entity.LobbyState.PLAYING;
+import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.GAME_OVER;
 
 public class GameTask implements Runnable {
     @Getter
@@ -53,7 +52,7 @@ public class GameTask implements Runnable {
     }
 
     private void onStop() {
-        game.lobby.setLobbyState(GAME_OVER);
+        game.lobby.setState(GAME_OVER);
         game.lobby.startGameEndingTimer();
         System.out.println("GameTask stopped.");
     }

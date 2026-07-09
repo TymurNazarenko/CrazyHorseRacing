@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
-import static de.thb.crazyhorseracing.entity.LobbyState.GAME_OVER;
-import static de.thb.crazyhorseracing.entity.LobbyState.PLAYING;
+import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.GAME_OVER;
+import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.PLAYING;
 
 @JsonIncludeProperties({"horses", "winner"})
 public class Game {
@@ -41,7 +41,7 @@ public class Game {
             double proportion = RandomSource.getSrc().nextDouble();
             horse.setVelocity(new Vec(INITIAL_RANDOM_VELOCITY*proportion, INITIAL_RANDOM_VELOCITY*(1-proportion)));
         }
-        lobby.setLobbyState(PLAYING);
+        lobby.setState(PLAYING);
     }
 
     public boolean isSpawnpointAvailable(Vec spawnpoint) {
@@ -85,7 +85,7 @@ public class Game {
             horse.setVelocity(new Vec(0,0));
         }
         // TODO send the winner to the players
-        lobby.setLobbyState(GAME_OVER);
+        lobby.setState(GAME_OVER);
         gameTaskHandler.cancel(true); // stops the game from processing
         // TODO destroy game automatically after some time
     }
@@ -131,7 +131,7 @@ public class Game {
     }
 
     public boolean doPlayerMove(Player player, MoveType moveType) { // returns whether the move was actually carried out
-        if (lobby.getLobbyState() != PLAYING) return false;
+        if (lobby.getState() != PLAYING) return false;
         Optional<Horse> hs = getHorse(player);
         if (hs.isEmpty()) return false;
         Horse horse = hs.get();

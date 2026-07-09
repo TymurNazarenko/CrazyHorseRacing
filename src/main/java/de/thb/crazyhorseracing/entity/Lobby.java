@@ -12,9 +12,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.thb.crazyhorseracing.entity.LobbyState.*;
+import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.*;
 
 public class Lobby {
+    public enum LobbyState {
+        WAITING_FOR_PLAYERS,
+        READY_TO_PLAY,
+        PLAYING,
+        GAME_OVER,
+        TO_BE_DELETED;
+    }
+
     @Getter
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     @Getter
@@ -33,7 +41,7 @@ public class Lobby {
     private final Game game;
     @Getter
     @Setter
-    private LobbyState lobbyState = WAITING_FOR_PLAYERS;
+    private LobbyState state = WAITING_FOR_PLAYERS;
 
 
     @Getter
@@ -75,7 +83,7 @@ public class Lobby {
     }
 
     public boolean canAddPlayer(Player player) {
-        if (lobbyState != WAITING_FOR_PLAYERS && lobbyState != READY_TO_PLAY) return false;
+        if (state != WAITING_FOR_PLAYERS && state != READY_TO_PLAY) return false;
         if (hasPlayer(player)) return false;
         if (players.size() >= maxPlayers) return false; // if this case occurs, there is an error in the logic
         if (player.getHorseType() == null) return false;
@@ -87,8 +95,8 @@ public class Lobby {
         players.add(player);
         game.addHorse(player);
 
-        if (lobbyState == WAITING_FOR_PLAYERS && players.size() >= minPlayers) {
-            lobbyState = READY_TO_PLAY;
+        if (state == WAITING_FOR_PLAYERS && players.size() >= minPlayers) {
+            state = READY_TO_PLAY;
             startGameBeginningTimer();
         }
 
@@ -96,7 +104,7 @@ public class Lobby {
     }
 
     public boolean canRemovePlayer(Player player) {
-        if (lobbyState == PLAYING || lobbyState == GAME_OVER) return false;
+        if (state == LobbyState.PLAYING || state == LobbyState.GAME_OVER) return false;
         if (!hasPlayer(player)) return false;
         return true;
     }
@@ -105,8 +113,8 @@ public class Lobby {
         if (!canRemovePlayer(player)) return false;
         players.remove(player);
 
-        if (lobbyState == READY_TO_PLAY && players.size() < minPlayers) {
-            lobbyState = WAITING_FOR_PLAYERS;
+        if (state == READY_TO_PLAY && players.size() < minPlayers) {
+            state = WAITING_FOR_PLAYERS;
             stopGameBeginningTimer();
         }
 
@@ -122,7 +130,7 @@ public class Lobby {
     }
 
     private synchronized void startGame(ThreadPoolTaskExecutor executor) {
-        if (lobbyState != READY_TO_PLAY) return;
+        if (state != READY_TO_PLAY) return;
         if (gameTaskFuture != null && !gameTaskFuture.isDone()) return;
 
         gameTask = new GameTask(game);
@@ -131,13 +139,13 @@ public class Lobby {
     }
 
     private synchronized void stopGame() {
-        lobbyState = TO_BE_DELETED;
+        state = TO_BE_DELETED;
         // TODO delete lobby from LobbyManager
         // TODO redirect the players to the main page
     }
 
     public synchronized void startGameEndingTimer() {
-        if (lobbyState != GAME_OVER) return;
+        if (state != GAME_OVER) return;
         scheduler.schedule(
             () -> stopGame(),
             new Date(System.currentTimeMillis() + gameEndingTimerDelayMillis)
@@ -145,7 +153,7 @@ public class Lobby {
     }
 
     public synchronized void startGameBeginningTimer() {
-        if (lobbyState != READY_TO_PLAY) return;
+        if (state != READY_TO_PLAY) return;
         stopGameBeginningTimer();
 
         gameTimerTaskFuture = scheduler.schedule(
