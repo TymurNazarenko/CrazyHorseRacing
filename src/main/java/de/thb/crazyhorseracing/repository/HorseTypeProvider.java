@@ -16,49 +16,19 @@ import java.util.*;
 public class HorseTypeProvider {
     @Getter
     private List<HorseType> horseTypes;
-    private ObjectMapper jsonMapper;
-    private HorseTypeDTOMapper horseTypeDTOMapper;
-
-    public HorseType parseFile(String content) {
-        HorseTypeDTO horseTypeRaw = jsonMapper.readValue(content, HorseTypeDTO.class);
-        HorseType horseType = horseTypeDTOMapper.toDomain(horseTypeRaw);
-        return horseType;
-    }
 
     @PostConstruct
-    public void init() {
-        jsonMapper = new ObjectMapper();
-        horseTypeDTOMapper = new HorseTypeDTOMapper();
-        horseTypes = new ArrayList<>();
-
-        File dir = new File("./src/main/resources/horse_types");
-        File[] directoryListing = dir.listFiles();
-        if (directoryListing == null) throw new IllegalStateException("Horse types directory not found!");
-
-        for (File f : directoryListing) {
-            try {
-                String content = Files.readString(Path.of(f.getPath()));
-                HorseType horseType = parseFile(content);
-                if (horseType == null) { throw new NullPointerException(); }
-                horseTypes.add(horseType);
-            } catch (IOException e) {
-                System.err.println("Couldn't read horse type: " + f.getName());
-                System.err.println(e.getMessage());
-            } catch (NullPointerException e) {
-                System.err.println("Horse type turned null after being parsed: " + f.getName());
-                System.err.println(e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Something went wrong when parsing horse type: " + f.getName());
-                System.err.println(e.getMessage());
-            }
-        }
-
+    public void load() {
+        GenericJSONReader JSONReader = new GenericJSONReader();
+        List<String> files = JSONReader.getJSONFilesInDirectoryDecorated("./src/main/resources/horse_types", "HorseTypeProvider");
+        horseTypes = JSONReader.parseJSONFiles(files, HorseTypeDTO.class, new HorseTypeDTOMapper(), "HorseTypeProvider");
         System.out.println("Loaded " + horseTypes.size() + " horse types");
 
         if (!horseTypes.isEmpty()) {
             Player.setDefaultHorseType(getHorseById(1));
         }
     }
+
     public HorseType getHorseById(long id) {
         return horseTypes.stream().filter(h -> h.id() == id).findFirst().orElseGet(() -> null);
     }

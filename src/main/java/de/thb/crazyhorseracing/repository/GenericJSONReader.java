@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JacksonException;
 import de.thb.crazyhorseracing.entity.GameMap;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GenericJSONReader {
     private final ObjectMapper jsonMapper;
@@ -55,5 +57,35 @@ public class GenericJSONReader {
             }
         }
         return results;
+    }
+
+    private List<String> getJSONFilesInDirectory(String path) throws IllegalArgumentException, IOException {
+        Path directory = Path.of(path);
+
+        if (!Files.exists(directory)) {
+            throw new IllegalArgumentException("Path does not exist: " + path);
+        }
+
+        if (!Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("Path is not a directory: " + path);
+        }
+
+        try (Stream<Path> paths = Files.list(Path.of(path))) {
+            return paths
+                    .filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().endsWith(".json"))
+                    .map(Path::toString)
+                    .toList();
+        }
+    }
+
+    public List<String> getJSONFilesInDirectoryDecorated(String path, String logger) {
+        try {
+            return getJSONFilesInDirectory(path);
+        } catch (Exception e) {
+            System.err.printf("[%s] Error while getting JSON files inside directory: %s%n", path, logger);
+            System.err.println(e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }

@@ -11,49 +11,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class GameMapProvider {
     @Getter
     private List<GameMap> maps;
-    private ObjectMapper jsonMapper;
-    private GameMapDTOMapper gameMapDTOMapper;
-
-    public GameMap parseFile(String content) {
-        GameMapDTO levelRaw = jsonMapper.readValue(content, GameMapDTO.class);
-        GameMap level = gameMapDTOMapper.toDomain(levelRaw);
-        return level;
-    }
 
     @PostConstruct
-    public void init() {
-        jsonMapper = new ObjectMapper();
-        gameMapDTOMapper = new GameMapDTOMapper();
-        maps = new ArrayList<>();
-
-        File dir = new File("./src/main/resources/levels");
-        File[] directoryListing = dir.listFiles();
-        if (directoryListing == null) throw new IllegalStateException("Levels directory not found!");
-
-        for (File f : directoryListing) {
-            try {
-                String content = Files.readString(Path.of(f.getPath()));
-                GameMap gameMap = parseFile(content);
-                if (gameMap == null) { throw new NullPointerException(); }
-                maps.add(gameMap);
-            } catch (IOException e) {
-                System.err.println("Couldn't read level file: " + f.getName());
-                System.err.println(e.getMessage());
-            } catch (NullPointerException e) {
-                System.err.println("Level turned null after being parsed: " + f.getName());
-                System.err.println(e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Something went wrong when parsing level: " + f.getName());
-                System.err.println(e.getMessage());
-            }
-        }
-
+    public void load() {
+        GenericJSONReader JSONReader = new GenericJSONReader();
+        List<String> files = JSONReader.getJSONFilesInDirectoryDecorated("./src/main/resources/levels", "GameMapProvider");
+        maps = JSONReader.parseJSONFiles(files, GameMapDTO.class, new GameMapDTOMapper(), "GameMapProvider");
         System.out.println("Loaded " + maps.size() + " levels");
     }
 
