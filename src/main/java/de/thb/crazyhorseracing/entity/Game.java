@@ -73,7 +73,7 @@ public class Game {
         if (horses.size() >= map.maxPlayers()) return false;
 
         List<Vec> spawnpoints = getAvailableSpawnpoints();
-        if  (spawnpoints.isEmpty()) return false;
+        if (spawnpoints.isEmpty()) return false;
 
         // Choose a random spawnpoint
         Vec chosenSpawnpoint = spawnpoints.get(RandomService.nextInt(spawnpoints.size()));
@@ -89,6 +89,7 @@ public class Game {
         for (Horse horse : horses) {
             horse.setVelocity(new Vec(0,0));
         }
+
         // TODO send the winner to the players
 
         lobby.setState(GAME_OVER);

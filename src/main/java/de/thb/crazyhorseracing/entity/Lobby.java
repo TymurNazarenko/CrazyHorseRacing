@@ -139,6 +139,13 @@ public class Lobby {
     }
 
     private synchronized void destroyGameAndLobby() {
+        for (Player player : players) {
+            player.addGame();
+        }
+
+        Player winner = game.getWinner();
+        if (winner != null) winner.addWin();
+
         state = TO_BE_DELETED;
         // TODO delete lobby from LobbyManager
         // TODO redirect the players to the main page
