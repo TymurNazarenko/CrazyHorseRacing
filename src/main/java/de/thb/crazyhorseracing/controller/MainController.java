@@ -36,12 +36,11 @@ public class MainController {
 
     @GetMapping("/game/{id}")
     public String game(@PathVariable int id, Model model, HttpSession session) {
-        Optional<Lobby> optionalLobby = lobbyManager.getLobby(id);
-        if (optionalLobby.isEmpty()) {
+        Lobby lobby = lobbyManager.getLobby(id);
+        if (lobby == null) {
             return "redirect:/";
         }
 
-        Lobby lobby = optionalLobby.get();
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
         if (!lobby.isPlayerAllowed(player)) {

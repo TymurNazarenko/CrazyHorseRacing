@@ -2,6 +2,7 @@ package de.thb.crazyhorseracing.repository;
 
 import de.thb.crazyhorseracing.entity.*;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -13,8 +14,9 @@ import java.util.*;
 
 @Component
 public class HorseTypeProvider {
-    private ObjectMapper jsonMapper;
+    @Getter
     private List<HorseType> horseTypes;
+    private ObjectMapper jsonMapper;
 
     public HorseType parseFile(String content) {
         // TODO throw exceptions here (when format is wrong), also handle them in the loop
@@ -58,9 +60,5 @@ public class HorseTypeProvider {
     }
     public HorseType getHorseById(long id) {
         return horseTypes.stream().filter(h -> h.id() == id).findFirst().orElseGet(() -> null);
-    }
-
-    public List<HorseType> getHorseTypes() { // returns a shallow copy of the horses array. We don't return the original array to prevent manipulation of the list
-        return new ArrayList<>(horseTypes);
     }
 }

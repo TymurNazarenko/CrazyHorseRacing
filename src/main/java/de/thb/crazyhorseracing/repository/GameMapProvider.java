@@ -57,7 +57,7 @@ public class GameMapProvider {
         System.out.println("Loaded " + maps.size() + " levels");
     }
 
-    public Optional<GameMap> getMapById(long id) {
-        return maps.stream().filter(m -> m.id() == id).findFirst();
+    public GameMap getMapById(long id) {
+        return maps.stream().filter(m -> m.id() == id).findFirst().orElseGet(() -> null);
     }
 }

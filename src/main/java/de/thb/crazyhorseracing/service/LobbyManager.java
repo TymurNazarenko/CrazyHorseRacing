@@ -4,58 +4,51 @@ import de.thb.crazyhorseracing.entity.GameMap;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.GameMapProvider;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class LobbyManager {
-    @Autowired
-    private ThreadPoolTaskExecutor executor;
-    @Autowired
-    private TaskScheduler scheduler;
-    private List<Lobby> lobbies;
+    private final ThreadPoolTaskExecutor executor;
+    private final TaskScheduler scheduler;
+    private final List<Lobby> lobbies;
     private final GameMapProvider maps;
 
-    public LobbyManager(GameMapProvider maps) {
+    public LobbyManager(GameMapProvider maps, ThreadPoolTaskExecutor executor, TaskScheduler scheduler) {
+        this.executor = executor;
+        this.scheduler = scheduler;
         this.maps = maps;
+        this.lobbies = new ArrayList<>();
     }
 
-    @PostConstruct
-    public void init() {
-        lobbies = new ArrayList<>();
-    }
-
-    public Optional<Lobby> getLobby(Player player) {
+    public Lobby getLobby(Player player) {
         for (Lobby lobby : lobbies) {
             if (lobby.hasPlayer(player)) {
-                return Optional.of(lobby);
+                return lobby;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     public boolean playerHasLobby(Player player) {
-        return getLobby(player).isPresent();
+        return getLobby(player) != null;
     }
 
-    public Optional<Lobby> getLobby(int id) {
+    public Lobby getLobby(int id) {
         for (Lobby lobby : lobbies) {
             if (lobby.getId() == id) {
-                return Optional.of(lobby);
+                return lobby;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     public boolean lobbyExists(int id) {
-        return getLobby(id).isPresent();
+        return getLobby(id) != null;
     }
 
     private Lobby createLobby(int minPlayers, int maxPlayers, Player player, GameMap gameMap) {
@@ -64,24 +57,24 @@ public class LobbyManager {
         return lobby;
     }
 
-    public Optional<Lobby> findSuitableLobby(Player player) {
+    public Lobby joinSuitableLobby(Player player) {
         for (Lobby lobby : lobbies) {
             if (lobby.canAddPlayer(player)) {
                 lobby.addPlayer(player);
-                return Optional.of(lobby);
+                return lobby;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     public Lobby getJoinOrCreateLobby(Player player) {
-        Optional<Lobby> existingLobby = getLobby(player);
-        if (existingLobby.isPresent()) return existingLobby.get();
+        Lobby existingLobby = getLobby(player);
+        if (existingLobby != null) return existingLobby;
 
-        Optional<Lobby> joinedLobby = findSuitableLobby(player);
-        if (joinedLobby.isPresent()) return joinedLobby.get();
+        Lobby joinedLobby = joinSuitableLobby(player);
+        if (joinedLobby != null) return joinedLobby;
 
-        return createLobby(2, 2, player, maps.getMapById(1).get()); // TODO no hardcoding
+        return createLobby(2, 2, player, maps.getMapById(1)); // TODO no hardcoding
     }
 
     public List<Lobby> getLobbies() {

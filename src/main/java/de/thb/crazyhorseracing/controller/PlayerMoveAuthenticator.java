@@ -28,9 +28,8 @@ public class PlayerMoveAuthenticator implements HandshakeInterceptor {
             if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
 
             int gameId = extractGameId(request);
-            Optional<Lobby> lobbyOptional = lobbies.getLobby(gameId);
-            if (lobbyOptional.isEmpty()) return false;
-            Lobby lobby = lobbyOptional.get();
+            Lobby lobby = lobbies.getLobby(gameId);
+            if (lobby == null) return false;
 
             HttpServletRequest httpRequest = servletRequest.getServletRequest();
             HttpSession session = httpRequest.getSession(false);

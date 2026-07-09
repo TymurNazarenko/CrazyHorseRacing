@@ -12,11 +12,13 @@ import java.util.List;
 
 @Component
 public class PlayerManager {
+    private final PlayerRepository playerRepository;
+    private List<Player> players;
 
-    @Autowired
-    private PlayerRepository playerRepository;
-
-    private List<Player> players = new ArrayList<>();
+    public PlayerManager(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+        this.players = new ArrayList<>();
+    }
 
     @PostConstruct
     private void init() {

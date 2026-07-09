@@ -29,9 +29,8 @@ public class PlayerMoveHandlerWS extends TextWebSocketHandler {
         Player player = players.getPlayer(jsessionId);
         if (player == null) return;
 
-        Optional<Lobby> lb = lobbies.getLobby(player);
-        if (lb.isEmpty()) return;
-        Lobby lobby = lb.get();
+        Lobby lobby = lobbies.getLobby(player);
+        if (lobby == null) return;
 
         String payload = message.getPayload();
         try {
