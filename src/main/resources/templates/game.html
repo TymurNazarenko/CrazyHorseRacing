@@ -25,9 +25,9 @@
         const status_socket = new WebSocket(`ws://localhost:8080/ws/game/` + gameId + `/status`);
         status_socket.onmessage = (event) => {
             let str = event.data.toString();
-            let receivedMessage = JSON.parse(str);
-            // TODO also handle the "winner" state
-            for (let receivedHorse of receivedMessage.horses) {
+            let message = JSON.parse(str);
+
+            for (let receivedHorse of message.horses) {
                 let existingHorseIndex = getHorseIndex(receivedHorse.id);
                 if (existingHorseIndex === -1) {
                     console.log("New horse detected");
@@ -46,6 +46,13 @@
                     horses[existingHorseIndex] = receivedHorse;
                     receivedHorse.dom_elem = previousHorse.dom_elem;
                 }
+            }
+
+            if (!gameover && message.winner !== null) {
+                gameover = true;
+                // TODO figure out if the winner is ourselves or not
+                console.log(message.winner.username + " wins!");
+                // TODO actual game over/you win screen
             }
         };
 
