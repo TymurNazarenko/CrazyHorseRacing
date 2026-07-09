@@ -4,8 +4,10 @@ import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.PlayerRepository;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +16,12 @@ import java.util.List;
 public class PlayerManager {
     private final PlayerRepository playerRepository;
     private List<Player> players;
+    private final PasswordEncoder passwordHasher;
 
     public PlayerManager(PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
         this.players = new ArrayList<>();
+        passwordHasher = new BCryptPasswordEncoder();
     }
 
     @PostConstruct
@@ -25,19 +29,15 @@ public class PlayerManager {
         players = (List<Player>) playerRepository.findAll();
     }
 
-    public Player getPlayer(String jid) {
+    public Player getPlayerByJID(String jid) {
         return players.stream().filter(player -> player.getJid().equals(jid)).findFirst().orElse(null);
-    }
-
-    public boolean playerExists(String jid) {
-        return getPlayer(jid) != null;
     }
 
     private Player createPlayer(String jid, HorseType horseType) {
         Player player = new Player(jid, horseType);
         players.add(player);
         playerRepository.save(player);
-        return getPlayer(jid);
+        return getPlayerByJID(jid);
     }
 
     private Player createPlayer(String jid) {
@@ -45,12 +45,34 @@ public class PlayerManager {
     }
 
     public Player getOrCreatePlayer(String jid, HorseType horseType) {
-        Player player = getPlayer(jid);
+        Player player = getPlayerByJID(jid);
         if (player == null) player = createPlayer(jid, horseType);
         return player;
     }
 
     public Player getOrCreatePlayer(String jid) {
         return getOrCreatePlayer(jid, null);
+    }
+
+    public Player getPlayerByLogin(String login) {
+        return players.stream().filter(player -> player.getLogin().equals(login)).findFirst().orElse(null);
+    }
+
+    public boolean isLoginAvailable(String login) {
+        return getPlayerByLogin(login) == null;
+    }
+
+    // Return whether successful
+    public boolean setPlayerLoginPassword(Player player, String login, String password) {
+        if (!isLoginAvailable(login)) return false;
+        String passwordHash =  passwordHasher.encode(password);
+        player.setPasswordHash(passwordHash);
+        player.setLogin(login);
+        return true;
+    }
+
+    public boolean doesPasswordMatch(Player player, String password) {
+        String passwordHash =  passwordHasher.encode(password);
+        return passwordHash.equals(player.getPasswordHash());
     }
 }

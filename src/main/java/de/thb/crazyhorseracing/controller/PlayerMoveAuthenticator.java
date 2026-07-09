@@ -35,7 +35,7 @@ public class PlayerMoveAuthenticator implements HandshakeInterceptor {
             if (session == null) return false;
 
             String jsessionId = session.getId();
-            Player player = players.getPlayer(jsessionId);
+            Player player = players.getPlayerByJID(jsessionId);
             if (player == null || !lobby.hasPlayer(player)) return false;
 
             attributes.put("JSESSIONID", jsessionId);

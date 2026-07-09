@@ -23,7 +23,7 @@ public class Player {
     @Id
     private String UUID;
 
-    // The login+passwordHash combo is optional
+    // The login+passwordHash combo is an optional way to log in
     @Getter
     @Setter
     private String login;
@@ -33,7 +33,7 @@ public class Player {
 
     @Getter
     @Setter
-    private String username; // anonymous username to differentiate players
+    private String username; // The name which is shown to other users
 
     @Getter
     @Transient
