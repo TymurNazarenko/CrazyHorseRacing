@@ -90,13 +90,14 @@ public class Game {
             horse.setVelocity(new Vec(0,0));
         }
         // TODO send the winner to the players
+
         lobby.setState(GAME_OVER);
+        lobby.startGameEndingTimer();
         gameTaskHandler.cancel(true); // stops the game from processing
-        // TODO destroy game automatically after some time
     }
 
     public void processStep(double dt_seconds) {
-        // TODO clamp dt_seconds to reasonable values
+        dt_seconds = Math.clamp(dt_seconds, 0.000001, 0.25);
 
         // Apply velocities to horses
         for (Horse horse : horses) {
@@ -135,7 +136,8 @@ public class Game {
         return null;
     }
 
-    public boolean doPlayerMove(Player player, MoveType moveType) { // returns whether the move was actually carried out
+    // Returns whether the move was actually carried out
+    public boolean doPlayerMove(Player player, MoveType moveType) {
         if (lobby.getState() != PLAYING) return false;
         Horse horse = getHorse(player);
         if (horse == null) return false;

@@ -138,7 +138,7 @@ public class Lobby {
         game.setGameTaskHandler(gameTaskFuture);
     }
 
-    private synchronized void stopGame() {
+    private synchronized void destroyGameAndLobby() {
         state = TO_BE_DELETED;
         // TODO delete lobby from LobbyManager
         // TODO redirect the players to the main page
@@ -147,7 +147,7 @@ public class Lobby {
     public synchronized void startGameEndingTimer() {
         if (state != GAME_OVER) return;
         scheduler.schedule(
-            () -> stopGame(),
+            () -> destroyGameAndLobby(),
             new Date(System.currentTimeMillis() + gameEndingTimerDelayMillis)
         );
     }
