@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Future;
 
 import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.GAME_OVER;
@@ -121,20 +120,19 @@ public class Game {
         }
     }
 
-    public Optional<Horse> getHorse(Player player) {
+    public Horse getHorse(Player player) {
         for  (Horse horse : horses) {
             if (horse.player.equals(player)) {
-                return Optional.of(horse);
+                return horse;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     public boolean doPlayerMove(Player player, MoveType moveType) { // returns whether the move was actually carried out
         if (lobby.getState() != PLAYING) return false;
-        Optional<Horse> hs = getHorse(player);
-        if (hs.isEmpty()) return false;
-        Horse horse = hs.get();
+        Horse horse = getHorse(player);
+        if (horse == null) return false;
         return horse.Move(moveType);
     }
 }

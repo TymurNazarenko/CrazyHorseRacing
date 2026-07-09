@@ -14,7 +14,6 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class PlayerMoveAuthenticator implements HandshakeInterceptor {
     private final LobbyManager lobbies;
