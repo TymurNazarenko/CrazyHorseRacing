@@ -16,12 +16,20 @@ public class Player {
 
     @Getter
     @Setter
-    @Id
     private String jid;
 
     @Getter
     @Setter
+    @Id
     private String UUID;
+
+    // The login+passwordHash combo is optional
+    @Getter
+    @Setter
+    private String login;
+    @Getter
+    @Setter
+    private String passwordHash;
 
     @Getter
     @Setter
