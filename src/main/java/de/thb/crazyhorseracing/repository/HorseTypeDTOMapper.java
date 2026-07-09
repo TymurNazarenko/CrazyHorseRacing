@@ -4,8 +4,8 @@ import de.thb.crazyhorseracing.entity.*;
 
 import java.util.List;
 
-public class HorseTypeDTOMapper {
-    public static HorseType toDomain(HorseTypeDTO dto) {
+public class HorseTypeDTOMapper implements DTOMapper<HorseTypeDTO,HorseType> {
+    public HorseType toDomain(HorseTypeDTO dto) {
         return new HorseType(
                 dto.id(),
                 dto.imagePath(),

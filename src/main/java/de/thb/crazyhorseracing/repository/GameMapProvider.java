@@ -18,16 +18,18 @@ public class GameMapProvider {
     @Getter
     private List<GameMap> maps;
     private ObjectMapper jsonMapper;
+    private GameMapDTOMapper gameMapDTOMapper;
 
     public GameMap parseFile(String content) {
         GameMapDTO levelRaw = jsonMapper.readValue(content, GameMapDTO.class);
-        GameMap level = GameMapDTOMapper.toDomain(levelRaw);
+        GameMap level = gameMapDTOMapper.toDomain(levelRaw);
         return level;
     }
 
     @PostConstruct
     public void init() {
         jsonMapper = new ObjectMapper();
+        gameMapDTOMapper = new GameMapDTOMapper();
         maps = new ArrayList<>();
 
         File dir = new File("./src/main/resources/levels");

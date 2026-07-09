@@ -17,16 +17,18 @@ public class HorseTypeProvider {
     @Getter
     private List<HorseType> horseTypes;
     private ObjectMapper jsonMapper;
+    private HorseTypeDTOMapper horseTypeDTOMapper;
 
     public HorseType parseFile(String content) {
         HorseTypeDTO horseTypeRaw = jsonMapper.readValue(content, HorseTypeDTO.class);
-        HorseType horseType = HorseTypeDTOMapper.toDomain(horseTypeRaw);
+        HorseType horseType = horseTypeDTOMapper.toDomain(horseTypeRaw);
         return horseType;
     }
 
     @PostConstruct
     public void init() {
         jsonMapper = new ObjectMapper();
+        horseTypeDTOMapper = new HorseTypeDTOMapper();
         horseTypes = new ArrayList<>();
 
         File dir = new File("./src/main/resources/horse_types");
