@@ -2,7 +2,7 @@ package de.thb.crazyhorseracing.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import de.thb.crazyhorseracing.repository.RandomService;
+import de.thb.crazyhorseracing.service.RandomService;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,10 +35,15 @@ public class Game {
     }
 
     public void start() {
-        // TODO give all horses random initial velocities (currently it only pushes them into positive x and y)
+        // Give all horses random initial velocities
         for (Horse horse : horses) {
-            double proportion = RandomService.nextDouble();
-            horse.setVelocity(new Vec(INITIAL_RANDOM_VELOCITY*proportion, INITIAL_RANDOM_VELOCITY*(1-proportion)));
+            // Pick a random point on the unit circle
+            double x = RandomService.nextDouble();
+            double y = Math.sqrt(1-x*x);
+            x = RandomService.nextBoolean() ? x : -x; // Randomly invert x
+            y = RandomService.nextBoolean() ? y : -y; // Randomly invert y
+
+            horse.setVelocity(new Vec(INITIAL_RANDOM_VELOCITY*x, INITIAL_RANDOM_VELOCITY*y));
         }
         lobby.setState(PLAYING);
     }

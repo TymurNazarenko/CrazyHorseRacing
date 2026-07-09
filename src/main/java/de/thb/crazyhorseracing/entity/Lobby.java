@@ -63,7 +63,7 @@ public class Lobby {
         if (maxPlayers < minPlayers) {
             throw new IllegalArgumentException("maxPlayers must be at least as large as minPlayers");
         }
-        if (maxPlayers >= gameMap.maxPlayers()) {
+        if (maxPlayers > gameMap.maxPlayers()) {
             throw new IllegalArgumentException("maxPlayers can't exceed the maxPlayers of the map!");
         }
 

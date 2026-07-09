@@ -1,21 +1,12 @@
 package de.thb.crazyhorseracing.repository;
 
 import de.thb.crazyhorseracing.entity.*;
+import de.thb.crazyhorseracing.service.RandomService;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.ObjectMapper;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class GameMapProvider {

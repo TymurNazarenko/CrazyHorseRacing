@@ -1,4 +1,4 @@
-package de.thb.crazyhorseracing.repository;
+package de.thb.crazyhorseracing.service;
 
 import lombok.Getter;
 
@@ -13,5 +13,9 @@ public class RandomService {
 
     public static int nextInt(int bound) {
         return src.nextInt(bound);
+    }
+
+    public static boolean nextBoolean() {
+        return src.nextBoolean();
     }
 }
