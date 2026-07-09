@@ -4,7 +4,7 @@ import de.thb.crazyhorseracing.entity.*;
 
 import java.util.List;
 
-public class HorseTypeMapper {
+public class HorseTypeDTOMapper {
     public static HorseType toDomain(HorseTypeDTO dto) {
         return new HorseType(
                 dto.id(),

@@ -19,7 +19,7 @@ public class HorseTypeProvider {
     public HorseType parseFile(String content) {
         // TODO throw exceptions here (when format is wrong), also handle them in the loop
         HorseTypeDTO horseTypeRaw = jsonMapper.readValue(content, HorseTypeDTO.class);
-        HorseType horseType = HorseTypeMapper.toDomain(horseTypeRaw);
+        HorseType horseType = HorseTypeDTOMapper.toDomain(horseTypeRaw);
         return horseType;
     }
 

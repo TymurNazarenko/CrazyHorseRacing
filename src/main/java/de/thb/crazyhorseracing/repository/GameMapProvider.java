@@ -23,7 +23,7 @@ public class GameMapProvider {
     public GameMap parseFile(String content) {
         // TODO throw exceptions here (when format is wrong) and handle them in the loop
         GameMapDTO levelRaw = jsonMapper.readValue(content, GameMapDTO.class);
-        GameMap level = GameMapMapper.toDomain(levelRaw);
+        GameMap level = GameMapDTOMapper.toDomain(levelRaw);
         return level;
     }
 

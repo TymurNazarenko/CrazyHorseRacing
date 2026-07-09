@@ -4,7 +4,7 @@ import de.thb.crazyhorseracing.entity.*;
 
 import java.util.List;
 
-public class GameMapMapper {
+public class GameMapDTOMapper {
     public static GameMap toDomain(GameMapDTO dto) {
         return new GameMap(
                 dto.id(),
