@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,5 +32,9 @@ public class GameMapProvider {
 
     public GameMap getMapById(long id) {
         return maps.stream().filter(m -> m.id() == id).findFirst().orElseGet(() -> null);
+    }
+
+    public GameMap getRandomMap() {
+        return maps.get(RandomService.nextInt(maps.size()));
     }
 }

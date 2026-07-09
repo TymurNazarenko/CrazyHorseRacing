@@ -52,6 +52,8 @@ public class LobbyManager {
     }
 
     private Lobby createLobby(int minPlayers, int maxPlayers, Player player, GameMap gameMap) {
+        minPlayers = Math.min(minPlayers, gameMap.maxPlayers());
+        maxPlayers = Math.min(maxPlayers, gameMap.maxPlayers());
         Lobby lobby = new Lobby(minPlayers, maxPlayers, player, gameMap, executor, scheduler);
         lobbies.add(lobby);
         return lobby;
@@ -74,7 +76,7 @@ public class LobbyManager {
         Lobby joinedLobby = joinSuitableLobby(player);
         if (joinedLobby != null) return joinedLobby;
 
-        return createLobby(2, 2, player, maps.getMapById(1)); // TODO no hardcoding
+        return createLobby(2, 999, player, maps.getRandomMap());
     }
 
     public List<Lobby> getLobbies() {
