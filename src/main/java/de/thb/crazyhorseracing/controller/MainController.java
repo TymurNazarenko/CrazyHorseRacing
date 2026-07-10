@@ -74,4 +74,9 @@ public class MainController {
     public String level_creator(Model model) {
         return "level_creator";
     }
+
+    @GetMapping("/account")
+    public String account(Model model) {
+        return "account";
+    }
 }
