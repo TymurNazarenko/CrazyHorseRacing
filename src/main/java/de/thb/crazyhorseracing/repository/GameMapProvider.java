@@ -26,6 +26,6 @@ public class GameMapProvider {
     }
 
     public GameMap getRandomMap() {
-        return maps.get(RandomService.nextInt(maps.size()));
+        return maps.get(RandomService.nextInt(maps.size()+1));
     }
 }
