@@ -85,15 +85,19 @@
         document.addEventListener("keydown", function(event) {
             switch (event.key) {
                 case "ArrowUp":
+                    event.preventDefault();
                     move_up();
                     break;
                 case "ArrowDown":
+                    event.preventDefault();
                     move_down();
                     break;
                 case "ArrowLeft":
+                    event.preventDefault();
                     move_left();
                     break;
                 case "ArrowRight":
+                    event.preventDefault();
                     move_right();
                     break;
             }
@@ -131,7 +135,6 @@
 <div layout:fragment="content">
     <!-- TODO position these differently so the user can't scroll -->
     <h1 style="text-align:center">Your Game</h1>
-    <h4 id="gamestate" style="text-align:center"> TODO status </h4>
     <div id="game">
         <img id="level-image" th:src="${levelImage}" alt="If you're seeing this, something went wrong">
     </div>
