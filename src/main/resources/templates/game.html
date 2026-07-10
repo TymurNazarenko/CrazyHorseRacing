@@ -9,6 +9,7 @@
     <script th:inline="javascript">
         let wallHitboxes = [[${walls}]];
         let carrotHitbox = [[${carrot}]];
+        let horseSize = [[${horseSize}]];
         let gameId = [[${gameId}]];
         let myUUID = [[${UUID}]];
         const horses = [];
@@ -38,6 +39,8 @@
                     img.setAttribute("class", "horse");
                     img.id = "horse_" + receivedHorse.id;
                     img.src = receivedHorse.type.imagePath;
+                    img.height = horseSize*100;
+                    img.width = horseSize*100;
                     // TODO style the div more here?
                     // Such as displaying the name of the player owning this horse
                     receivedHorse.dom_elem = img;

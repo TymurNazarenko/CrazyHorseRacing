@@ -12,7 +12,8 @@ public class GameMapDTOMapper implements DTOMapper<GameMapDTO,GameMap> {
                 new Carrot(new Hitbox(mapVecList(dto.carrot()))),
                 dto.maxPlayers(),
                 mapVecList(dto.spawnpoints()),
-                dto.imagePath()
+                dto.imagePath(),
+                dto.horseSize()
         );
     }
 

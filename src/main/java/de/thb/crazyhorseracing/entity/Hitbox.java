@@ -12,6 +12,14 @@ public record Hitbox(List<Vec> vertices) {
         return new Hitbox(new_vertices);
     }
 
+    public Hitbox multiply(double size) {
+        ArrayList<Vec> new_vertices = new ArrayList<>();
+        for (Vec vec : vertices) {
+            new_vertices.add(vec.multiply(size));
+        }
+        return new Hitbox(new_vertices);
+    }
+
     public Vec getAlgebraicCenter() {
         double avgX = 0;
         double avgY = 0;

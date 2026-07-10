@@ -27,6 +27,10 @@ public class Horse implements AbsoluteHitboxObject {
 
     @Getter
     @Setter
+    private double size = 1.0;
+
+    @Getter
+    @Setter
     private Vec pos;
     @Getter
     @Setter
@@ -36,8 +40,9 @@ public class Horse implements AbsoluteHitboxObject {
     private long lastCollisionTime = 0;
     private AbsoluteHitboxObject lastCollisionObj = null;
 
-    public Horse(HorseType type, Player player, Vec pos) {
+    public Horse(HorseType type, Player player, Vec pos, double size) {
         this.type = type;
+        this.size = size;
         this.player = player;
         this.pos = pos;
         this.velocity = new Vec(0,0);
@@ -45,7 +50,7 @@ public class Horse implements AbsoluteHitboxObject {
     }
 
     public Hitbox getAbsoluteHitbox() {
-        return type.hitbox().withDisplacement(pos);
+        return type.hitbox().multiply(size).withDisplacement(pos);
     }
 
     public void reflectIfColliding(AbsoluteHitboxObject obj) {

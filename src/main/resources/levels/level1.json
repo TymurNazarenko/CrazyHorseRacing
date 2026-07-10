@@ -2,6 +2,7 @@
   "id": 1,
   "maxPlayers": 4,
   "imagePath": "/images/level1.jpg",
+  "horseSize": 1.1,
   "carrot": [[683, 787], [712, 828], [850, 757], [815, 703]],
   "spawnpoints": [[137, 134], [264, 137], [380, 137], [505, 137]],
   "walls": [

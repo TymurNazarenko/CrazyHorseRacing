@@ -78,7 +78,7 @@ public class Game {
         // Choose a random spawnpoint
         Vec chosenSpawnpoint = spawnpoints.get(RandomService.nextInt(spawnpoints.size()));
         HorseType horseType = player.getHorseType();
-        horses.add(new Horse(horseType, player, chosenSpawnpoint));
+        horses.add(new Horse(horseType, player, chosenSpawnpoint, map.horseSize()));
 
         return true;
     }
