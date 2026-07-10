@@ -106,24 +106,28 @@
             for (let receivedHorse of message.horses) {
                 let existingHorseIndex = getHorseIndex(receivedHorse.id);
                 if (existingHorseIndex === -1) {
-                    console.log("New horse detected");
+                    let hrs = document.createElement("div")
+                    document.getElementById("game").appendChild(hrs);
+                    hrs.setAttribute("class", "horse");
+                    hrs.id = "horse_" + receivedHorse.id;
+                    hrs.style.height = horseSize*100 + "px";
+                    hrs.style.width = horseSize*100 + "px";
+
                     let img = document.createElement("img");
-                    document.getElementById("game").appendChild(img);
-
-                    img.setAttribute("class", "horse");
-                    img.id = "horse_" + receivedHorse.id;
+                    hrs.appendChild(img);
                     img.src = receivedHorse.type.imagePath;
-                    img.height = horseSize*100;
-                    img.width = horseSize*100;
-                    // TODO style the div more here?
-                    // Such as displaying the name of the player owning this horse
-                    receivedHorse.dom_elem = img;
 
+                    let plrName = document.createElement("div")
+                    hrs.appendChild(plrName);
+                    plrName.setAttribute("class", "player-name");
+                    plrName.innerText = receivedHorse.player.username;
+
+                    receivedHorse.dom_elem = hrs;
                     horses.push(receivedHorse);
                 } else {
                     let previousHorse = horses[existingHorseIndex];
-                    horses[existingHorseIndex] = receivedHorse;
                     receivedHorse.dom_elem = previousHorse.dom_elem;
+                    horses[existingHorseIndex] = receivedHorse;
                 }
             }
 
@@ -179,23 +183,21 @@
                 horse.pos.x = horse.pos.x + horse.velocity.x * delta;
                 horse.pos.y = horse.pos.y + horse.velocity.y * delta;
             }
-            // TODO check for hitbox intersections?
         }
 
         let prevFrameTimestamp;
         function updateHorsesVisuals(timestamp) {
             if (prevFrameTimestamp === undefined) { prevFrameTimestamp = timestamp; }
-            let delay = (timestamp - prevFrameTimestamp)/1000; // todo clamp value? the first call will cause this to be 0
+            let delay = (timestamp - prevFrameTimestamp)/1000;
             prevFrameTimestamp = timestamp;
 
             // Updating the divs to match their x,y coordinates
             for (let horse of horses) {
-                horse.dom_elem.style.top = (horse.pos.y - horse.dom_elem.height/2) + "px";
-                horse.dom_elem.style.left = (horse.pos.x - horse.dom_elem.width/2) + "px";
+                horse.dom_elem.style.top = (horse.pos.y - horseSize*100/2) + "px";
+                horse.dom_elem.style.left = (horse.pos.x - horseSize*100/2) + "px";
             }
 
             updateHorsesPositions(delay);
-
             requestAnimationFrame(updateHorsesVisuals); // animation loop
         }
 
