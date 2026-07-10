@@ -5,8 +5,81 @@
     <title>Crazy Horse Racing</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <script th:inline="javascript">
+        function showConfetti() {
+            confetti({particleCount: 200, spread: 90, origin: {y: 0.4}});
+            setTimeout(() => confetti({particleCount: 100, angle: 60, spread: 55, origin: {x: 0}}), 300);
+            setTimeout(() => confetti({particleCount: 100, angle: 120, spread: 55, origin: {x: 1}}), 500);
+        }
+
+        function showWasted(duration = 2500) {
+            // Remove any existing overlay
+            document.querySelector(".wasted-overlay")?.remove();
+
+            const overlay = document.createElement("div");
+            overlay.className = "wasted-overlay";
+            overlay.textContent = "WASTED";
+
+            document.body.appendChild(overlay);
+
+            // Trigger fade-in
+            requestAnimationFrame(() => {
+                overlay.style.opacity = "1";
+                overlay.style.background = "rgba(0,0,0,0.45)";
+                overlay.style.backdropFilter = "blur(3px)";
+            });
+
+            // Fade out
+            setTimeout(() => {
+                overlay.style.opacity = "0";
+                overlay.style.background = "rgba(0,0,0,0)";
+                overlay.style.backdropFilter = "blur(0px)";
+
+                overlay.addEventListener("transitionend", () => {
+                    overlay.remove();
+                }, { once: true });
+            }, duration);
+        }
+
+        function showYouWin(duration = 2500) {
+            document.querySelector(".win-overlay")?.remove();
+
+            const overlay = document.createElement("div");
+            overlay.className = "win-overlay";
+            overlay.textContent = "YOU WIN";
+
+            document.body.appendChild(overlay);
+
+            requestAnimationFrame(() => {
+                overlay.style.opacity = "1";
+                overlay.style.transform = "scale(1)";
+                overlay.style.background = "rgba(0,0,0,.35)";
+                overlay.style.backdropFilter = "blur(2px)";
+            });
+
+            setTimeout(() => {
+                overlay.style.opacity = "0";
+                overlay.style.transform = "scale(0.95)";
+                overlay.style.background = "rgba(0,0,0,0)";
+                overlay.style.backdropFilter = "blur(0px)";
+
+                overlay.addEventListener("transitionend", () => {
+                    overlay.remove();
+                }, { once: true });
+            }, duration);
+        }
+
+        function winEffect() {
+            showYouWin();
+            showConfetti();
+        }
+
+        function loseEffect(winner) {
+            showWasted()
+        }
+
         let wallHitboxes = [[${walls}]];
         let carrotHitbox = [[${carrot}]];
         let horseSize = [[${horseSize}]];
@@ -14,6 +87,7 @@
         let myUUID = [[${UUID}]];
         const horses = [];
         let gameover = false;
+        let playing = false;
 
         function getHorseIndex(id) {
             for (let index = 0; index < horses.length; index++) {
@@ -58,12 +132,9 @@
                 // Figure out if the winner is ourselves or not
                 let I_Win = message.winner.UUID == myUUID;
                 if (I_Win) {
-                    // TODO actual "you win" screen and effect
-                    console.log("You Win!");
+                    winEffect();
                 } else {
-                    // TODO actual "you lose" screen and effect
-                    console.log("You Lose!");
-                    console.log(message.winner.username + " wins!");
+                    loseEffect(message.winner.username);
                 }
             }
         };
@@ -133,7 +204,6 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <!-- TODO position these differently so the user can't scroll -->
     <h1 style="text-align:center">Your Game</h1>
     <div id="game">
         <img id="level-image" th:src="${levelImage}" alt="If you're seeing this, something went wrong">
