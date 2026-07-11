@@ -19,7 +19,7 @@ public class GameTask implements Runnable {
     @Override
     public void run() {
         game.start();
-        System.out.println("GameTask started.");
+        System.out.printf("Game started on map %d with %d horses%n", game.map.id(), game.horses.size());
         long lastTime = System.nanoTime();
         while (running && !Thread.currentThread().isInterrupted()) {
             long now = System.nanoTime();
@@ -52,6 +52,6 @@ public class GameTask implements Runnable {
     }
 
     private void onStop() {
-        System.out.println("GameTask stopped.");
+        System.out.printf("Game ended with winner %s%n", game.getWinner().getUsername());
     }
 }
