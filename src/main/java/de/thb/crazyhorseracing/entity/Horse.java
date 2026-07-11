@@ -13,10 +13,11 @@ import java.util.concurrent.atomic.AtomicLong;
 @JsonIncludeProperties({"id", "type", "player", "pos", "velocity"})
 public class Horse implements AbsoluteHitboxObject {
     public static final long MOVE_DELAY_NS = 1_000_000_000; // 1 second
-    public static final Vec UP_VEL = new Vec(0, -20);
-    public static final Vec DOWN_VEL = new Vec(0, 20);
-    public static final Vec LEFT_VEL = new Vec(-20, 0);
-    public static final Vec RIGHT_VEL = new Vec(20, 0);
+    public static final double MOVE_STRENGTH = 20.0;
+    public static final Vec MOVE_UP_VEC = new Vec(0, MOVE_STRENGTH);
+    public static final Vec MOVE_DOWN_VEC = new Vec(0, -MOVE_STRENGTH);
+    public static final Vec MOVE_LEFT_VEC = new Vec(-MOVE_STRENGTH, 0);
+    public static final Vec MOVE_RIGHT_VEC = new Vec(MOVE_STRENGTH, 0);
     public static final long COLLISION_DELAY_NS = 200_000_000; // 0.2 seconds
 
     public static final AtomicInteger idCounter = new AtomicInteger(0);
@@ -102,19 +103,19 @@ public class Horse implements AbsoluteHitboxObject {
 
         switch (moveType) {
             case MOVE_UP -> {
-                velocity.addInPlace(UP_VEL);
+                velocity = velocity.add(MOVE_UP_VEC);
                 setMoveTime();
             }
             case MOVE_DOWN -> {
-                velocity.addInPlace(DOWN_VEL);
+                velocity = velocity.add(MOVE_DOWN_VEC);
                 setMoveTime();
             }
             case MOVE_LEFT -> {
-                velocity.addInPlace(LEFT_VEL);
+                velocity = velocity.add(MOVE_LEFT_VEC);
                 setMoveTime();
             }
             case MOVE_RIGHT -> {
-                velocity.addInPlace(RIGHT_VEL);
+                velocity = velocity.add(MOVE_RIGHT_VEC);
                 setMoveTime();
             }
         }

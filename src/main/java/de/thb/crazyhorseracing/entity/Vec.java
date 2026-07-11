@@ -13,18 +13,10 @@ public class Vec {
         this.y = y;
     }
 
-    // Every function here is pure unless stated otherwise in the comments
+    // Every function here is pure
 
-    // NOT PURE
-    public void applyVelocity(Vec velocity, double dt) {
-        this.x += velocity.getX() * dt;
-        this.y += velocity.getY() * dt;
-    }
-
-    // NOT PURE
-    public void addInPlace(Vec vec) {
-        this.x += vec.getX();
-        this.y += vec.getY();
+    public Vec applyVelocity(Vec velocity, double dt) {
+        return new Vec(x + velocity.getX() * dt, y += velocity.getY() * dt);
     }
 
     public double dist(Vec other) {

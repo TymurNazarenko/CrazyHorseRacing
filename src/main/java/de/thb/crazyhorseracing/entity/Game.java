@@ -32,6 +32,8 @@ public class Game {
         this.lobby = lobby;
         this.map = map;
         this.horses = new ArrayList<>();
+
+        System.out.println("New game object created");
     }
 
     public void start() {
@@ -102,8 +104,7 @@ public class Game {
 
         // Apply velocities to horses
         for (Horse horse : horses) {
-            Vec vec = horse.getPos();
-            vec.applyVelocity(horse.getVelocity(), dt_seconds);
+            horse.setPos(horse.getPos().applyVelocity(horse.getVelocity(), dt_seconds));
         }
 
         // Check if any horse intersects the carrots
