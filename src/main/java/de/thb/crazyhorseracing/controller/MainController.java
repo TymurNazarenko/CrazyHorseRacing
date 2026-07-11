@@ -46,9 +46,7 @@ public class MainController {
         }
 
         model.addAttribute("levelImage", lobby.getGame().map.imagePath()); // populate the game (image)
-        model.addAttribute("horseSize", lobby.getGame().map.horseSize());
-        model.addAttribute("walls", lobby.getGame().map.walls()); // populate the game (wall hitboxes)
-        model.addAttribute("carrot", lobby.getGame().map.carrot()); // populate the game (carrot)
+        model.addAttribute("horseSizeMultiplier", lobby.getGame().map.horseSize());
         model.addAttribute("gameId", lobby.getId());
         model.addAttribute("UUID", player.getUUID());
 

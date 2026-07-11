@@ -8,199 +8,156 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <script th:inline="javascript">
-        function showConfetti() {
-            confetti({particleCount: 200, spread: 90, origin: {y: 0.4}});
-            setTimeout(() => confetti({particleCount: 100, angle: 60, spread: 55, origin: {x: 0}}), 300);
-            setTimeout(() => confetti({particleCount: 100, angle: 120, spread: 55, origin: {x: 1}}), 500);
-        }
+        const HORSES_DEFAULT_SIZE = 100;
+        const horseSizeMultiplier = [[${horseSizeMultiplier}]];
+        const horseSize = HORSES_DEFAULT_SIZE*horseSizeMultiplier;
+        const gameId = [[${gameId}]];
+        const myUUID = [[${UUID}]];
 
-        function showWasted(duration = 2500) {
-            // Remove any existing overlay
-            document.querySelector(".wasted-overlay")?.remove();
-
-            const overlay = document.createElement("div");
-            overlay.className = "wasted-overlay";
-            overlay.textContent = "WASTED";
-
-            document.body.appendChild(overlay);
-
-            // Trigger fade-in
-            requestAnimationFrame(() => {
-                overlay.style.opacity = "1";
-                overlay.style.background = "rgba(0,0,0,0.45)";
-                overlay.style.backdropFilter = "blur(3px)";
-            });
-
-            // Fade out
-            setTimeout(() => {
-                overlay.style.opacity = "0";
-                overlay.style.background = "rgba(0,0,0,0)";
-                overlay.style.backdropFilter = "blur(0px)";
-
-                overlay.addEventListener("transitionend", () => {
-                    overlay.remove();
-                }, { once: true });
-            }, duration);
-        }
-
-        function showYouWin(duration = 2500) {
-            document.querySelector(".win-overlay")?.remove();
-
-            const overlay = document.createElement("div");
-            overlay.className = "win-overlay";
-            overlay.textContent = "YOU WIN";
-
-            document.body.appendChild(overlay);
-
-            requestAnimationFrame(() => {
-                overlay.style.opacity = "1";
-                overlay.style.transform = "scale(1)";
-                overlay.style.background = "rgba(0,0,0,.35)";
-                overlay.style.backdropFilter = "blur(2px)";
-            });
-
-            setTimeout(() => {
-                overlay.style.opacity = "0";
-                overlay.style.transform = "scale(0.95)";
-                overlay.style.background = "rgba(0,0,0,0)";
-                overlay.style.backdropFilter = "blur(0px)";
-
-                overlay.addEventListener("transitionend", () => {
-                    overlay.remove();
-                }, { once: true });
-            }, duration);
-        }
-
-        function winEffect() {
-            showYouWin();
-            showConfetti();
-        }
-
-        function loseEffect(winner) {
-            showWasted()
-        }
-
-        let wallHitboxes = [[${walls}]];
-        let carrotHitbox = [[${carrot}]];
-        let horseSize = [[${horseSize}]];
-        let gameId = [[${gameId}]];
-        let myUUID = [[${UUID}]];
+        // Dynamic variables
+        let stoppedPlaying = false;
         const horses = [];
-        let gameover = false;
-        let playing = false;
 
         function getHorseIndex(id) {
-            for (let index = 0; index < horses.length; index++) {
-                if (horses[index].id === id) {
-                    return index;
-                }
-            }
-            return -1;
+            return horses.findIndex(horse => horse.id === id);
         }
+        function addNewHorse(horse) {
+            const horseDiv = document.createElement("div")
+            document.getElementById('game').appendChild(horseDiv);
+            horseDiv.setAttribute("class", "horse");
+            horseDiv.id = `horse_${horse.id}`;
+            horseDiv.style.height = `${horseSize}px`;
+            horseDiv.style.width = `${horseSize}px`;
 
-        const status_socket = new WebSocket(`ws://localhost:8080/ws/game/` + gameId + `/status`);
-        status_socket.onmessage = (event) => {
-            let str = event.data.toString();
-            let message = JSON.parse(str);
+            const horseImage = document.createElement("img");
+            horseDiv.appendChild(horseImage);
+            horseImage.src = horse.type.imagePath;
 
-            for (let receivedHorse of message.horses) {
-                let existingHorseIndex = getHorseIndex(receivedHorse.id);
-                if (existingHorseIndex === -1) {
-                    let hrs = document.createElement("div")
-                    document.getElementById("game").appendChild(hrs);
-                    hrs.setAttribute("class", "horse");
-                    hrs.id = "horse_" + receivedHorse.id;
-                    hrs.style.height = horseSize*100 + "px";
-                    hrs.style.width = horseSize*100 + "px";
+            const playerName = document.createElement("div")
+            horseDiv.appendChild(playerName);
+            playerName.setAttribute("class", "player-name");
+            playerName.innerText = horse.player.username;
 
-                    let img = document.createElement("img");
-                    hrs.appendChild(img);
-                    img.src = receivedHorse.type.imagePath;
-
-                    let plrName = document.createElement("div")
-                    hrs.appendChild(plrName);
-                    plrName.setAttribute("class", "player-name");
-                    plrName.innerText = receivedHorse.player.username;
-
-                    receivedHorse.dom_elem = hrs;
-                    horses.push(receivedHorse);
-                } else {
-                    let previousHorse = horses[existingHorseIndex];
-                    receivedHorse.dom_elem = previousHorse.dom_elem;
-                    horses[existingHorseIndex] = receivedHorse;
-                }
-            }
-
-            if (!gameover && message.winner !== null) {
-                gameover = true;
-                // Figure out if the winner is ourselves or not
-                let I_Win = message.winner.UUID == myUUID;
-                if (I_Win) {
-                    winEffect();
-                } else {
-                    loseEffect(message.winner.username);
-                }
-            }
-        };
-
-        const move_socket = new WebSocket(`ws://localhost:8080/ws/game/` + gameId + `/move`);
-        function move_up() {
-            move_socket.send("MOVE_UP");
+            horse.div = horseDiv;
+            horses.push(horse);
         }
-        function move_down() {
-            move_socket.send("MOVE_DOWN");
+        function updateHorse(horseIndex, updatedHorse) {
+            updatedHorse.div = horses[horseIndex].div;
+            horses[horseIndex] = updatedHorse;
         }
-        function move_left() {
-            move_socket.send("MOVE_LEFT");
-        }
-        function move_right() {
-            move_socket.send("MOVE_RIGHT");
-        }
-
-        document.addEventListener("keydown", function(event) {
-            switch (event.key) {
-                case "ArrowUp":
-                    event.preventDefault();
-                    move_up();
-                    break;
-                case "ArrowDown":
-                    event.preventDefault();
-                    move_down();
-                    break;
-                case "ArrowLeft":
-                    event.preventDefault();
-                    move_left();
-                    break;
-                case "ArrowRight":
-                    event.preventDefault();
-                    move_right();
-                    break;
-            }
-        });
-
         function updateHorsesPositions(delta) {
-            for (horse of horses) {
+            for (const horse of horses) {
                 horse.pos.x = horse.pos.x + horse.velocity.x * delta;
                 horse.pos.y = horse.pos.y + horse.velocity.y * delta;
             }
         }
 
+
+
+        function showConfetti() {
+            confetti({particleCount: 200, spread: 90, origin: {y: 0.4}});
+            setTimeout(() => confetti({particleCount: 100, angle: 60, spread: 55, origin: {x: 0}}), 300);
+            setTimeout(() => confetti({particleCount: 100, angle: 120, spread: 55, origin: {x: 1}}), 500);
+        }
+        function showOverlay(className, text, duration = 2500, scale = "1", background = "rgba(0,0,0,.35)", blur = "2px") {
+            document.querySelector(`.${className}`)?.remove();
+
+            const overlay = document.createElement("div");
+            overlay.className = className;
+            overlay.textContent = text;
+
+            document.body.appendChild(overlay);
+
+            requestAnimationFrame(() => {
+                overlay.style.opacity = "1";
+                overlay.style.transform = `scale(${scale})`;
+                overlay.style.background = background;
+                overlay.style.backdropFilter = `blur(${blur})`;
+            });
+
+            setTimeout(() => {
+                overlay.style.opacity = "0";
+                overlay.style.transform = "scale(0.95)";
+                overlay.style.background = "transparent";
+                overlay.style.backdropFilter = "blur(0px)";
+
+                overlay.addEventListener("transitionend", () => overlay.remove(), { once: true });
+            }, duration);
+        }
+        function showYouWin() {
+            showOverlay("win-overlay", "YOU WIN");
+        }
+        function showWasted() {
+            showOverlay("wasted-overlay", "WASTED");
+        }
+        function winEffect(winner) {
+            showYouWin();
+            showConfetti();
+        }
+        function loseEffect(winner) {
+            showWasted()
+        }
+        function onGameOver(winner) {
+            const win = winner.UUID == myUUID;
+            if (win) {
+                winEffect(winner.username);
+            } else {
+                loseEffect(winner.username);
+            }
+        }
+
+
+
+        const status_socket = new WebSocket(`ws://localhost:8080/ws/game/${gameId}/status`);
+        status_socket.onmessage = (event) => {
+            const message = JSON.parse(event.data.toString());
+
+            for (const receivedHorse of message.horses) {
+                const horseIndex = getHorseIndex(receivedHorse.id);
+                if (horseIndex === -1) {
+                    addNewHorse(receivedHorse);
+                } else {
+                    updateHorse(horseIndex, receivedHorse);
+                }
+            }
+
+            if (!stoppedPlaying && message.winner !== null) {
+                stoppedPlaying = true;
+                onGameOver(message.winner);
+            }
+        };
+
+        const move_socket = new WebSocket(`ws://localhost:8080/ws/game/${gameId}/move`);
+        const moves = {
+            ArrowUp: "MOVE_UP",
+            ArrowDown: "MOVE_DOWN",
+            ArrowLeft: "MOVE_LEFT",
+            ArrowRight: "MOVE_RIGHT"
+        };
+        document.addEventListener("keydown", function(event) {
+            const move = moves[event.key];
+            if (!move) return;
+            event.preventDefault();
+            move_socket.send(move);
+        });
+
+
+
         let prevFrameTimestamp;
         function updateHorsesVisuals(timestamp) {
             if (prevFrameTimestamp === undefined) { prevFrameTimestamp = timestamp; }
-            let delay = (timestamp - prevFrameTimestamp)/1000;
+            const delay = (timestamp - prevFrameTimestamp)/1000;
             prevFrameTimestamp = timestamp;
 
-            // Updating the divs to match their x,y coordinates
-            for (let horse of horses) {
-                horse.dom_elem.style.top = (horse.pos.y - horseSize*100/2) + "px";
-                horse.dom_elem.style.left = (horse.pos.x - horseSize*100/2) + "px";
+            updateHorsesPositions(delay);
+
+            for (const horse of horses) {
+                horse.div.style.left = `${horse.pos.x - horseSize/2}px`;
+                horse.div.style.top = `${horse.pos.y - horseSize/2}px`;
             }
 
-            updateHorsesPositions(delay);
             requestAnimationFrame(updateHorsesVisuals); // animation loop
         }
-
         updateHorsesVisuals();
     </script>
 </head>
@@ -208,7 +165,7 @@
 <div layout:fragment="content">
     <h1 style="text-align:center">Your Game</h1>
     <div id="game">
-        <img id="level-image" th:src="${levelImage}" alt="If you're seeing this, something went wrong">
+        <img id="level-image" th:src="${levelImage}" alt="Couldn't load level image">
     </div>
 </div>
 </body>
