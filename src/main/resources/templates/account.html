@@ -7,11 +7,67 @@
 
     <script>
     </script>
+
+    <style>
+        .settings-body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        .settings-container {
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .settings-label {
+            width: 100px;
+            font-weight: bold;
+        }
+
+        .settings-input {
+            width: 220px;
+            padding: 6px;
+            margin-right: 10px;
+        }
+
+        .settings-button {
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body>
-<div layout:fragment="content">
-    <h1 style="text-align:center">Your account</h1>
-<!--    TODO-->
-</div>
+<body class="settings-body">
+<h1 style="text-align:center">Your Account</h1>
+
+<div class="settings-container">
+        <!-- Nickname Form -->
+        <form action="/set-nickname" method="post">
+            <div class="settings-row">
+                <label class="settings-label" for="nickname">Nickname:</label>
+                <input class="settings-input" type="text" id="nickname" name="nickname" th:value="${nickname}" required>
+                <button class="settings-button" type="submit">Set nickname</button>
+            </div>
+        </form>
+
+        <!-- Login & Password Form -->
+        <form action="/set-login-password" method="post">
+            <div class="settings-row">
+                <label class="settings-label" for="login">Login:</label>
+                <input class="settings-input" type="text" id="login" name="login" th:value="${login}" required>
+            </div>
+
+            <div class="settings-row">
+                <label class="settings-label" for="password">Password:</label>
+                <input class="settings-input" type="password" id="password" name="password" placeholder="Password" th:value="${password}" required>
+                <button class="settings-button" type="submit">Set login and password</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

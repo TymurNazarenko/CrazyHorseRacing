@@ -77,8 +77,9 @@ public class MainController {
     @GetMapping("/account")
     public String account(Model model, HttpSession session) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
-        model.addAttribute("player", player);
-        // TODO
+        model.addAttribute("nickname", player.getNickname());
+        model.addAttribute("login", player.getLogin());
+        model.addAttribute("password", player.getPasswordHash() != null ? "password" : "");
         return "account";
     }
 }

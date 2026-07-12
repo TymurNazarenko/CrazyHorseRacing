@@ -8,7 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
-@JsonIncludeProperties({"UUID", "username"})
+@JsonIncludeProperties({"UUID", "nickname"})
 public class Player {
     @Getter
     @Setter
@@ -33,7 +33,7 @@ public class Player {
 
     @Getter
     @Setter
-    private String username; // The name which is shown to other users
+    private String nickname; // The name which is shown to other users
 
     @Getter
     @Transient
@@ -49,7 +49,7 @@ public class Player {
     public Player(String jid, HorseType selectedHorseType) {
         this.jid = jid;
         this.horseType = (selectedHorseType != null) ? selectedHorseType : defaultHorseType;
-        this.username = RandomNameGenerator.generateRandomName();
+        this.nickname = RandomNameGenerator.generateRandomName();
         this.UUID = java.util.UUID.randomUUID().toString();
     }
 

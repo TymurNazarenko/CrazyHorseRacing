@@ -14,8 +14,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Horse implements AbsoluteHitboxObject {
     public static final long MOVE_DELAY_NS = 1_000_000_000; // 1 second
     public static final double MOVE_STRENGTH = 20.0;
-    public static final Vec MOVE_UP_VEC = new Vec(0, MOVE_STRENGTH);
-    public static final Vec MOVE_DOWN_VEC = new Vec(0, -MOVE_STRENGTH);
+    public static final Vec MOVE_UP_VEC = new Vec(0, -MOVE_STRENGTH);
+    public static final Vec MOVE_DOWN_VEC = new Vec(0, MOVE_STRENGTH);
     public static final Vec MOVE_LEFT_VEC = new Vec(-MOVE_STRENGTH, 0);
     public static final Vec MOVE_RIGHT_VEC = new Vec(MOVE_STRENGTH, 0);
     public static final long COLLISION_DELAY_NS = 200_000_000; // 0.2 seconds

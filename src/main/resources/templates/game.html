@@ -36,7 +36,7 @@
             const playerName = document.createElement("div")
             horseDiv.appendChild(playerName);
             playerName.setAttribute("class", "player-name");
-            playerName.innerText = horse.player.username;
+            playerName.innerText = horse.player.nickname;
 
             horse.div = horseDiv;
             horses.push(horse);
@@ -100,9 +100,9 @@
         function onGameOver(winner) {
             const win = winner.UUID == myUUID;
             if (win) {
-                winEffect(winner.username);
+                winEffect(winner.nickname);
             } else {
-                loseEffect(winner.username);
+                loseEffect(winner.nickname);
             }
         }
 
