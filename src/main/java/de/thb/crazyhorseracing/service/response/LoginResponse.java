@@ -1,4 +1,4 @@
-package de.thb.crazyhorseracing.service.object;
+package de.thb.crazyhorseracing.service.response;
 
 import lombok.Getter;
 import lombok.Setter;

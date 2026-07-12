@@ -20,7 +20,7 @@ public class HorseTypeProvider {
     @PostConstruct
     public void load() {
         GenericJSONReader JSONReader = new GenericJSONReader();
-        List<String> files = JSONReader.getJSONFilesInDirectoryDecorated("./src/main/resources/horse_types", "HorseTypeProvider");
+        List<String> files = JSONReader.getJSONFilesInDirectoryDecorated("./src/main/resources/horses", "HorseTypeProvider");
         horseTypes = JSONReader.parseJSONFiles(files, HorseTypeDTO.class, new HorseTypeDTOMapper(), "HorseTypeProvider");
         System.out.println("Loaded " + horseTypes.size() + " horse types");
 

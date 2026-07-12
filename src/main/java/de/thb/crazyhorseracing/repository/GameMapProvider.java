@@ -16,7 +16,7 @@ public class GameMapProvider {
     @PostConstruct
     public void load() {
         GenericJSONReader JSONReader = new GenericJSONReader();
-        List<String> files = JSONReader.getJSONFilesInDirectoryDecorated("./src/main/resources/levels", "GameMapProvider");
+        List<String> files = JSONReader.getJSONFilesInDirectoryDecorated("./src/main/resources/gamemaps", "GameMapProvider");
         maps = JSONReader.parseJSONFiles(files, GameMapDTO.class, new GameMapDTOMapper(), "GameMapProvider");
         System.out.println("Loaded " + maps.size() + " levels");
     }

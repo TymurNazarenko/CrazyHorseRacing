@@ -1,4 +1,4 @@
-package de.thb.crazyhorseracing.service.object;
+package de.thb.crazyhorseracing.service.response;
 
 public class ActionResponse {
     public final boolean success;
