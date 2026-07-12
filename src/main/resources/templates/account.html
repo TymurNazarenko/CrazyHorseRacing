@@ -5,11 +5,16 @@
     <title>Crazy Horse Racing</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
-<body class="settings-body">
-<div th:replace="fragments/header :: header"></div>
-<h1 style="text-align:center">Your Account</h1>
+<body>
 
-<div class="settings-container">
+<div th:replace="fragments/header :: header"></div>
+
+<div th:if="${error}" class="message error" th:text="${error}"></div>
+<div th:if="${success}" class="message success" th:text="${success}"></div>
+
+    <h1 style="text-align:center">Your Account</h1>
+
+    <div class="settings-container">
         <!-- Nickname Form -->
         <form action="/set-nickname" method="post">
             <div class="settings-row">
@@ -34,7 +39,24 @@
         </form>
     </div>
 
-    <div th:if="${error}" class="message error" th:text="${error}"></div>
-    <div th:if="${success}" class="message success" th:text="${success}"></div>
+    <hr>
+
+    <h1 style="text-align:center">Log into another Account</h1>
+
+    <div class="settings-container">
+        <!-- Login & Password Form -->
+        <form action="/log-in" method="post">
+            <div class="settings-row">
+                <label class="settings-label" for="login_other">Login:</label>
+                <input class="settings-input" type="text" id="login_other" name="login_other" placeholder="Login" required>
+            </div>
+
+            <div class="settings-row">
+                <label class="settings-label" for="password_other">Password:</label>
+                <input class="settings-input" type="password" id="password_other" name="password_other" placeholder="Password" required>
+                <button class="settings-button" type="submit">Log in</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

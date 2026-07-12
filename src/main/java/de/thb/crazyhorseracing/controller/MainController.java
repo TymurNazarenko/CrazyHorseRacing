@@ -108,4 +108,10 @@ public class MainController {
         }
         return "redirect:/account";
     }
+
+    @PostMapping("/log-in")
+    public String login(@RequestParam("login_other") String login, @RequestParam("password_other") String password, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        // TODO
+        return "redirect:/account";
+    }
 }
