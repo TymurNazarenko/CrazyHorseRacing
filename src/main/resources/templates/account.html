@@ -4,45 +4,9 @@
     <meta charset="UTF-8">
     <title>Crazy Horse Racing</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-
-    <script>
-    </script>
-
-    <style>
-        .settings-body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-        }
-
-        .settings-container {
-            width: fit-content;
-            margin: 0 auto;
-        }
-
-        .settings-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .settings-label {
-            width: 100px;
-            font-weight: bold;
-        }
-
-        .settings-input {
-            width: 220px;
-            padding: 6px;
-            margin-right: 10px;
-        }
-
-        .settings-button {
-            padding: 6px 12px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body class="settings-body">
+<div th:replace="fragments/header :: header"></div>
 <h1 style="text-align:center">Your Account</h1>
 
 <div class="settings-container">

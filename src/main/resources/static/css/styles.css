@@ -168,24 +168,55 @@ body {
     background: #f0f0f0;
 }
 
-.account-link {
-    font-size: 1.25rem;      /* Make the name larger */
+.header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+/* Left */
+.home-link {
+    font-size: 1.25rem;
     font-weight: bold;
     color: #333;
     text-decoration: none;
+    justify-self: start;
+}
+
+.home-link:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+/* Center */
+.header-center {
+    flex: 1;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #444;
+    justify-self: center;
+}
+
+/* Right */
+.account {
+    min-width: 120px;
+    text-align: right;
+}
+
+.account-link {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+    justify-self: end;
 }
 
 .account-link:hover {
     color: #007bff;
     text-decoration: underline;
     cursor: pointer;
-}
-
-.header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 10px 20px;
 }
 
 .message {
@@ -200,4 +231,31 @@ body {
 
 .success {
     color: #2e7d32; /* Green */
+}
+
+.settings-container {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.settings-label {
+    width: 100px;
+    font-weight: bold;
+}
+
+.settings-input {
+    width: 220px;
+    padding: 6px;
+    margin-right: 10px;
+}
+
+.settings-button {
+    padding: 6px 12px;
+    cursor: pointer;
 }

@@ -1,4 +1,11 @@
 <header th:fragment="header" class="header">
+    <a th:href="@{/}" class="home-link">Home</a>
+
+    <div class="header-center">
+        <span th:text="'Played Games: ' + ${player.playedGames}"></span><br>
+        <span th:text="'Victories: ' + ${player.wins}"></span>
+    </div>
+
     <nav>
         <div class="account">
             <a th:href="@{/account}" class="account-link">
