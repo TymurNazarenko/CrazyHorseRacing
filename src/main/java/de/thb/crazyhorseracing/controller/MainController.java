@@ -27,24 +27,25 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
+        Player player = playerManager.getOrCreatePlayer(session.getId());
+        model.addAttribute("player", player);
         model.addAttribute("horses", horseTypeProvider.getHorseTypes());
         return "home";
     }
 
     @GetMapping("/game/{id}")
     public String game(@PathVariable int id, Model model, HttpSession session) {
+        Player player = playerManager.getOrCreatePlayer(session.getId());
         Lobby lobby = lobbyManager.getLobby(id);
+
         if (lobby == null) {
             return "redirect:/";
-        }
-
-        Player player = playerManager.getOrCreatePlayer(session.getId());
-
-        if (!lobby.isPlayerAllowed(player)) {
+        } else if (!lobby.isPlayerAllowed(player)) {
             return "redirect:/";
         }
 
+        model.addAttribute("player", player);
         model.addAttribute("levelImage", lobby.getGame().map.imagePath()); // populate the game (image)
         model.addAttribute("horseSizeMultiplier", lobby.getGame().map.horseSize());
         model.addAttribute("gameId", lobby.getId());
@@ -60,7 +61,7 @@ public class MainController {
         HorseType horseType = horseTypeProvider.getHorseById(selectedHorseType);
         if (horseType == null) { // User selected a horse that doesn't exist
             model.addAttribute("error", "Invalid horse selected");
-            return home(model);
+            return home(model, session);
         }
         player.setHorseType(horseType);
 
@@ -74,7 +75,9 @@ public class MainController {
     }
 
     @GetMapping("/account")
-    public String account(Model model) {
+    public String account(Model model, HttpSession session) {
+        Player player = playerManager.getOrCreatePlayer(session.getId());
+        model.addAttribute("player", player);
         // TODO
         return "account";
     }

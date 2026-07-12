@@ -168,4 +168,22 @@ body {
     background: #f0f0f0;
 }
 
+.account-link {
+    font-size: 1.25rem;      /* Make the name larger */
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
 
+.account-link:hover {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 20px;
+}

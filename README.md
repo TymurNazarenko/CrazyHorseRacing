@@ -7,10 +7,9 @@ Each horse starts with a random velocity, but the players can accelerate their h
 
 
 # TODOs:
-- Show the player's name in the game page, so they know which horse is theirs
+- Show the player's name and win/loss statistics everywhere using the header
 - Allow the player to change their name and add a username+password combo (in the account page)
 - Polish the levels and horses, and create more of them
-- Show the player's win/loss statistics somewhere (maybe the account page?)
 - Make it so that the power of the initial velocity of horses is not a constant, but is a variable controlled by the level
 - Fix the fact that the database allows null entries for players
 

@@ -1,0 +1,9 @@
+<header th:fragment="header" class="header">
+    <nav>
+        <div class="account">
+            <a th:href="@{/account}" class="account-link">
+                <span th:text="${player.username}">User</span>
+            </a>
+        </div>
+    </nav>
+</header>
