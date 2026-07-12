@@ -1,8 +1,10 @@
 package de.thb.crazyhorseracing.service;
 
+import com.mysql.cj.log.Log;
 import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.PlayerRepository;
+import de.thb.crazyhorseracing.service.object.LoginResponse;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,8 +59,9 @@ public class PlayerManager {
         return players.stream().filter(player -> login.equals(player.getLogin())).findFirst().orElse(null);
     }
 
-    public boolean isLoginAvailable(String login) {
-        return getPlayerByLogin(login) == null;
+    public boolean isLoginAvailable(Player player, String login) {
+        Player playerWithLogin = getPlayerByLogin(login);
+        return (playerWithLogin == null) || (playerWithLogin.equals(player));
     }
 
     // Returns error message or nothing
@@ -76,9 +79,9 @@ public class PlayerManager {
     // Return error message or nothing
     public String setPlayerLoginPassword(Player player, String login, String password) {
         if (login.isEmpty() || password.isEmpty()) return "Login and password can't be empty";
-        if (!isLoginAvailable(login)) return "Login is already taken";
+        if (!isLoginAvailable(player, login)) return "Login is already taken";
 
-        String passwordHash =  passwordHasher.encode(password);
+        String passwordHash = passwordHasher.encode(password);
         player.setPasswordHash(passwordHash);
         player.setLogin(login);
         return "";
@@ -95,7 +98,26 @@ public class PlayerManager {
     }
 
     public boolean doesPasswordMatch(Player player, String password) {
-        String passwordHash =  passwordHasher.encode(password);
-        return passwordHash.equals(player.getPasswordHash());
+        String storedHash = player.getPasswordHash();
+        return passwordHasher.matches(password, storedHash);
+    }
+
+    public LoginResponse login(String login, String password) {
+        if (login == null || login.isEmpty()) {
+            return new LoginResponse(false, null, "Login can't be empty", null);
+        } else if (password == null || password.isEmpty()) {
+            return new LoginResponse(false, null, "Password can't be empty", null);
+        }
+
+        Player player = getPlayerByLogin(login);
+        if  (player == null) {
+            return new LoginResponse(false, null, "Player not found", null);
+        }
+
+        if (!doesPasswordMatch(player, password)) {
+            return new LoginResponse(false, null, "Wrong password", null);
+        }
+
+        return new LoginResponse(true, player.getJid(), null, "Successfully logged in");
     }
 }

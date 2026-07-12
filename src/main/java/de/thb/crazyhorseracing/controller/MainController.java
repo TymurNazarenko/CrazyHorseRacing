@@ -6,6 +6,9 @@ import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.HorseTypeProvider;
 import de.thb.crazyhorseracing.service.LobbyManager;
 import de.thb.crazyhorseracing.service.PlayerManager;
+import de.thb.crazyhorseracing.service.object.LoginResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,7 +59,7 @@ public class MainController {
     }
 
     @PostMapping("/start_game")
-    public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, HttpSession session, RedirectAttributes redirectAttributes) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
         HorseType horseType = horseTypeProvider.getHorseById(selectedHorseType);
@@ -71,7 +74,7 @@ public class MainController {
     }
 
     @GetMapping("/level_creator")
-    public String level_creator(Model model) {
+    public String level_creator() {
         return "level_creator";
     }
 
@@ -86,7 +89,7 @@ public class MainController {
     }
 
     @PostMapping("/set-nickname")
-    public String setNickname(@RequestParam("nickname") String nickname, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String setNickname(@RequestParam("nickname") String nickname, HttpSession session, RedirectAttributes redirectAttributes) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
         String error = playerManager.setNickname(player, nickname);
         if (error != null && !error.isEmpty()) {
@@ -98,7 +101,7 @@ public class MainController {
     }
 
     @PostMapping("/set-login-password")
-    public String setNickname(@RequestParam("login") String login, @RequestParam("password") String password, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String setNickname(@RequestParam("login") String login, @RequestParam("password") String password, HttpSession session, RedirectAttributes redirectAttributes) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
         String error = playerManager.setPlayerLoginPassword(player, login, password);
         if (error != null && !error.isEmpty()) {
@@ -110,8 +113,19 @@ public class MainController {
     }
 
     @PostMapping("/log-in")
-    public String login(@RequestParam("login_other") String login, @RequestParam("password_other") String password, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        // TODO
-        return "redirect:/account";
+    public String login(@RequestParam("login_other") String login, @RequestParam("password_other") String password, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        LoginResponse loginResponse = playerManager.login(login, password);
+        if (loginResponse.success()) {
+            Cookie cookie = new Cookie("JSESSIONID", loginResponse.jid());
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
+
+            redirectAttributes.addFlashAttribute("success", loginResponse.successText());
+            return "redirect:/account";
+        } else {
+            redirectAttributes.addFlashAttribute("error", loginResponse.error());
+            return "redirect:/account";
+        }
     }
 }
