@@ -1,10 +1,10 @@
 package de.thb.crazyhorseracing.service;
 
-import com.mysql.cj.log.Log;
 import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.PlayerRepository;
 import de.thb.crazyhorseracing.service.object.LoginResponse;
+import de.thb.crazyhorseracing.service.object.Response;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,37 +64,34 @@ public class PlayerManager {
         return (playerWithLogin == null) || (playerWithLogin.equals(player));
     }
 
-    // Returns error message or nothing
-    public String setNickname(Player player, String nickname) {
+    public Response setNickname(Player player, String nickname) {
         if (nickname == null || nickname.isEmpty()) {
-            return "Nickname can't be empty";
-        } else if (nickname.length() > 100) {
-            return "Nickname too long";
+            return new Response(false, "Nickname can't be empty");
+        } else if (nickname.length() > 30) {
+            return new Response(false, "Nickname too long");
         }
 
         player.setNickname(nickname);
-        return "";
+        return new Response(true, "Nickname has been set");
     }
 
-    // Return error message or nothing
-    public String setPlayerLoginPassword(Player player, String login, String password) {
-        if (login.isEmpty() || password.isEmpty()) return "Login and password can't be empty";
-        if (!isLoginAvailable(player, login)) return "Login is already taken";
+    public Response setPlayerLoginPassword(Player player, String login, String password) {
+        if (login.isEmpty() || password.isEmpty()) return new Response(false,"Login and password can't be empty");
+        if (!isLoginAvailable(player, login)) return new Response(false, "Login is already taken");
 
         String passwordHash = passwordHasher.encode(password);
         player.setPasswordHash(passwordHash);
         player.setLogin(login);
-        return "";
+        return new Response(true, "Login and password successfully set");
     }
 
-    // Return error message or nothing
-    public String setPlayerHorseType(Player player, HorseType horseType) {
+    public Response setPlayerHorseType(Player player, HorseType horseType) {
         if (horseType == null) {
-            return "Invalid horse selected";
+            return new Response(false, "Invalid horse selected");
         }
 
         player.setHorseType(horseType);
-        return "";
+        return new Response(true, "Horse type selected");
     }
 
     public boolean doesPasswordMatch(Player player, String password) {
@@ -104,20 +101,20 @@ public class PlayerManager {
 
     public LoginResponse login(String login, String password) {
         if (login == null || login.isEmpty()) {
-            return new LoginResponse(false, null, "Login can't be empty", null);
+            return new LoginResponse(false, "Login can't be empty");
         } else if (password == null || password.isEmpty()) {
-            return new LoginResponse(false, null, "Password can't be empty", null);
+            return new LoginResponse(false, "Password can't be empty");
         }
 
         Player player = getPlayerByLogin(login);
         if  (player == null) {
-            return new LoginResponse(false, null, "Player not found", null);
+            return new LoginResponse(false, "Player not found");
         }
 
         if (!doesPasswordMatch(player, password)) {
-            return new LoginResponse(false, null, "Wrong password", null);
+            return new LoginResponse(false, "Wrong password");
         }
 
-        return new LoginResponse(true, player.getJid(), null, "Successfully logged in");
+        return new LoginResponse(true, "Successfully logged in", player.getJid());
     }
 }

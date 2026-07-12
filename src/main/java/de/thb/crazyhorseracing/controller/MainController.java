@@ -7,6 +7,7 @@ import de.thb.crazyhorseracing.repository.HorseTypeProvider;
 import de.thb.crazyhorseracing.service.LobbyManager;
 import de.thb.crazyhorseracing.service.PlayerManager;
 import de.thb.crazyhorseracing.service.object.LoginResponse;
+import de.thb.crazyhorseracing.service.object.Response;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -61,12 +62,13 @@ public class MainController {
     @PostMapping("/start_game")
     public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, HttpSession session, RedirectAttributes redirectAttributes) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
-
         HorseType horseType = horseTypeProvider.getHorseById(selectedHorseType);
-        String error = playerManager.setPlayerHorseType(player, horseType);
-        if (error != null && !error.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", error);
-            return "redirect:/";
+
+        Response response = playerManager.setPlayerHorseType(player, horseType);
+        if (response.success) {
+            redirectAttributes.addFlashAttribute("success", response.message);
+        } else {
+            redirectAttributes.addFlashAttribute("error", response.message);
         }
 
         Lobby lobby = lobbyManager.getJoinOrCreateLobby(player);
@@ -91,41 +93,44 @@ public class MainController {
     @PostMapping("/set-nickname")
     public String setNickname(@RequestParam("nickname") String nickname, HttpSession session, RedirectAttributes redirectAttributes) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
-        String error = playerManager.setNickname(player, nickname);
-        if (error != null && !error.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", error);
+
+        Response response = playerManager.setNickname(player, nickname);
+        if (response.success) {
+            redirectAttributes.addFlashAttribute("success", response.message);
         } else {
-            redirectAttributes.addFlashAttribute("success", "Nickname set successfully");
+            redirectAttributes.addFlashAttribute("error", response.message);
         }
+
         return "redirect:/account";
     }
 
     @PostMapping("/set-login-password")
     public String setNickname(@RequestParam("login") String login, @RequestParam("password") String password, HttpSession session, RedirectAttributes redirectAttributes) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
-        String error = playerManager.setPlayerLoginPassword(player, login, password);
-        if (error != null && !error.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", error);
+
+        Response response = playerManager.setPlayerLoginPassword(player, login, password);
+        if (response.success) {
+            redirectAttributes.addFlashAttribute("success", response.message);
         } else {
-            redirectAttributes.addFlashAttribute("success", "Login and password set successfully");
+            redirectAttributes.addFlashAttribute("error", response.message);
         }
+
         return "redirect:/account";
     }
 
     @PostMapping("/log-in")
     public String login(@RequestParam("login_other") String login, @RequestParam("password_other") String password, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         LoginResponse loginResponse = playerManager.login(login, password);
-        if (loginResponse.success()) {
-            Cookie cookie = new Cookie("JSESSIONID", loginResponse.jid());
+        if (loginResponse.success) {
+            Cookie cookie = new Cookie("JSESSIONID", loginResponse.getJid());
             cookie.setPath("/");
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
 
-            redirectAttributes.addFlashAttribute("success", loginResponse.successText());
-            return "redirect:/account";
+            redirectAttributes.addFlashAttribute("success", loginResponse.message);
         } else {
-            redirectAttributes.addFlashAttribute("error", loginResponse.error());
-            return "redirect:/account";
+            redirectAttributes.addFlashAttribute("error", loginResponse.message);
         }
+        return "redirect:/account";
     }
 }
