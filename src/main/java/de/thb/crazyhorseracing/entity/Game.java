@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.GAME_OVER;
 import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.PLAYING;
 
-@JsonIncludeProperties({"horses", "winner"})
+@JsonIncludeProperties({"horses", "winner", "lobby"})
 public class Game {
     public final Lobby lobby; // needed to communicate game state back to the lobby
     public final List<Horse> horses;

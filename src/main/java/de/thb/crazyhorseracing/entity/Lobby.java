@@ -1,5 +1,7 @@
 package de.thb.crazyhorseracing.entity;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.scheduling.TaskScheduler;
@@ -15,13 +17,29 @@ import java.util.function.Consumer;
 
 import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.*;
 
+@JsonIncludeProperties({"state"})
 public class Lobby {
     public enum LobbyState {
-        WAITING_FOR_PLAYERS,
-        READY_TO_PLAY,
-        PLAYING,
-        GAME_OVER,
-        TO_BE_DELETED;
+        WAITING_FOR_PLAYERS("Waiting for players..."),
+        READY_TO_PLAY("Ready to play!"),
+        PLAYING("Playing"),
+        GAME_OVER("Game over!"),
+        TO_BE_DELETED("Deleting lobby...");
+
+        private final String displayName;
+        LobbyState(String displayName) {
+            this.displayName = displayName;
+        }
+
+        @JsonValue
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        @Override
+        public String toString() {
+            return displayName;
+        }
     }
 
     @Getter
