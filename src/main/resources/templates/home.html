@@ -44,7 +44,7 @@
 
 
     <h3 style="text-align:center">Choose your horse</h3>
-    <form th:action="@{/}" method="post" style="justify-content: center; align-items: center; align-self: center">
+    <form action="/start_game" method="post" style="justify-content: center; align-items: center; align-self: center">
         <div class="grid-container">
             <div class="grid-item" th:each="horseType : ${horses}">
                 <input type="radio"

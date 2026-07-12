@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MainController {
@@ -54,16 +55,16 @@ public class MainController {
         return "game";
     }
 
-    @PostMapping("/")
-    public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, Model model, HttpSession session) {
+    @PostMapping("/start_game")
+    public String startGame(@RequestParam("selectedHorseType") long selectedHorseType, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         Player player = playerManager.getOrCreatePlayer(session.getId());
 
         HorseType horseType = horseTypeProvider.getHorseById(selectedHorseType);
-        if (horseType == null) { // User selected a horse that doesn't exist
-            model.addAttribute("error", "Invalid horse selected");
-            return home(model, session);
+        String error = playerManager.setPlayerHorseType(player, horseType);
+        if (error != null && !error.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", error);
+            return "redirect:/";
         }
-        player.setHorseType(horseType);
 
         Lobby lobby = lobbyManager.getJoinOrCreateLobby(player);
         return "redirect:/game/" + lobby.getId();
@@ -81,5 +82,29 @@ public class MainController {
         model.addAttribute("login", player.getLogin());
         model.addAttribute("password", player.getPasswordHash() != null ? "password" : "");
         return "account";
+    }
+
+    @PostMapping("/set-nickname")
+    public String setNickname(@RequestParam("nickname") String nickname, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        Player player = playerManager.getOrCreatePlayer(session.getId());
+        String error = playerManager.setNickname(player, nickname);
+        if (error != null && !error.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", error);
+        } else {
+            redirectAttributes.addFlashAttribute("success", "Nickname set successfully");
+        }
+        return "redirect:/account";
+    }
+
+    @PostMapping("/set-login-password")
+    public String setNickname(@RequestParam("login") String login, @RequestParam("password") String password, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        Player player = playerManager.getOrCreatePlayer(session.getId());
+        String error = playerManager.setPlayerLoginPassword(player, login, password);
+        if (error != null && !error.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", error);
+        } else {
+            redirectAttributes.addFlashAttribute("success", "Login and password set successfully");
+        }
+        return "redirect:/account";
     }
 }

@@ -54,20 +54,44 @@ public class PlayerManager {
     }
 
     public Player getPlayerByLogin(String login) {
-        return players.stream().filter(player -> player.getLogin().equals(login)).findFirst().orElse(null);
+        return players.stream().filter(player -> login.equals(player.getLogin())).findFirst().orElse(null);
     }
 
     public boolean isLoginAvailable(String login) {
         return getPlayerByLogin(login) == null;
     }
 
-    // Return whether successful
-    public boolean setPlayerLoginPassword(Player player, String login, String password) {
-        if (!isLoginAvailable(login)) return false;
+    // Returns error message or nothing
+    public String setNickname(Player player, String nickname) {
+        if (nickname == null || nickname.isEmpty()) {
+            return "Nickname can't be empty";
+        } else if (nickname.length() > 100) {
+            return "Nickname too long";
+        }
+
+        player.setNickname(nickname);
+        return "";
+    }
+
+    // Return error message or nothing
+    public String setPlayerLoginPassword(Player player, String login, String password) {
+        if (login.isEmpty() || password.isEmpty()) return "Login and password can't be empty";
+        if (!isLoginAvailable(login)) return "Login is already taken";
+
         String passwordHash =  passwordHasher.encode(password);
         player.setPasswordHash(passwordHash);
         player.setLogin(login);
-        return true;
+        return "";
+    }
+
+    // Return error message or nothing
+    public String setPlayerHorseType(Player player, HorseType horseType) {
+        if (horseType == null) {
+            return "Invalid horse selected";
+        }
+
+        player.setHorseType(horseType);
+        return "";
     }
 
     public boolean doesPasswordMatch(Player player, String password) {

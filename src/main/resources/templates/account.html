@@ -69,5 +69,8 @@
             </div>
         </form>
     </div>
+
+    <div th:if="${error}" class="message error" th:text="${error}"></div>
+    <div th:if="${success}" class="message success" th:text="${success}"></div>
 </body>
 </html>
