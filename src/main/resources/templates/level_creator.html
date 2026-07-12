@@ -366,7 +366,7 @@
             `[${hb.map(convertPoint).join(", ")}]`;
 
         const formatWalls = (walls) =>
-            `[\n  ${walls.map(formatHitbox).join(",\n  ")}\n]`;
+            `[\n    ${walls.map(formatHitbox).join(",\n    ")}\n  ]`;
 
         const formatCarrot = (carrot) =>
             carrot ? formatHitbox(carrot) : "null";
@@ -378,6 +378,7 @@
   "id": -1,
   "maxPlayers": ${spawnpoints.length},
   "imagePath": ${backgroundImageName ? `"${backgroundImageName}"` : "null"},
+  "horseSize": 1.0,
   "carrot": ${formatCarrot(carrot)},
   "spawnpoints": ${formatSpawns(spawnpoints)},
   "walls": ${formatWalls(walls)}
