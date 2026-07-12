@@ -3,8 +3,8 @@ package de.thb.crazyhorseracing.entity;
 import java.util.Collections;
 import java.util.List;
 
-public record GameMap(long id, List<Wall> walls, Carrot carrot, int maxPlayers, List<Vec> horseSpawnpoints, String imagePath, double horseSize) {
-    public GameMap(long id, List<Wall> walls, Carrot carrot, int maxPlayers, List<Vec> horseSpawnpoints, String imagePath, double horseSize) {
+public record GameMap(long id, List<Wall> walls, Carrot carrot, int maxPlayers, List<Vec> horseSpawnpoints, String imagePath, double horseSize, double initialRandomVelocity) {
+    public GameMap(long id, List<Wall> walls, Carrot carrot, int maxPlayers, List<Vec> horseSpawnpoints, String imagePath, double horseSize, double initialRandomVelocity) {
         this.id = id;
         this.walls = Collections.unmodifiableList(walls);
         this.carrot = carrot;
@@ -12,5 +12,6 @@ public record GameMap(long id, List<Wall> walls, Carrot carrot, int maxPlayers, 
         this.horseSpawnpoints = Collections.unmodifiableList(horseSpawnpoints);
         this.imagePath = imagePath;
         this.horseSize = horseSize;
+        this.initialRandomVelocity = initialRandomVelocity;
     }
 }

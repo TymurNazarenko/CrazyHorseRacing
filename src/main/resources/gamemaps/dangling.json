@@ -3,6 +3,7 @@
   "maxPlayers": 2,
   "imagePath": "/images/gamemap/dangling.jpg",
   "horseSize": 0.8,
+  "initialRandomVelocity": 200.0,
   "carrot": [[442, 106], [485, 189], [527, 106]],
   "spawnpoints": [[81, 786], [223, 914]],
   "walls": [

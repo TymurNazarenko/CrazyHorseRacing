@@ -13,7 +13,8 @@ public class GameMapDTOMapper implements DTOMapper<GameMapDTO,GameMap> {
                 dto.maxPlayers(),
                 mapVecList(dto.spawnpoints()),
                 dto.imagePath(),
-                dto.horseSize()
+                dto.horseSize(),
+                dto.initialRandomVelocity()
         );
     }
 

@@ -7,6 +7,8 @@
     "id",
     "maxPlayers",
     "imagePath",
+    "horseSize",
+    "initialRandomVelocity",
     "carrot",
     "spawnpoints",
     "walls"
@@ -22,6 +24,12 @@
     },
     "imagePath": {
       "type": "string"
+    },
+    "horseSize": {
+      "type": "number"
+    },
+    "initialRandomVelocity": {
+      "type": "number"
     },
     "carrot": {
       "type": "array",

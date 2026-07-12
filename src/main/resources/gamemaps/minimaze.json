@@ -3,6 +3,7 @@
   "maxPlayers": 4,
   "imagePath": "/images/gamemap/minimaze.jpg",
   "horseSize": 1.0,
+  "initialRandomVelocity": 200.0,
   "carrot": [[872, 810], [876, 927], [892, 929], [912, 812]],
   "spawnpoints": [[111, 107], [346, 122], [120, 249], [335, 257]],
   "walls": [

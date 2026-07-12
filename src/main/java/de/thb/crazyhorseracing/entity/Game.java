@@ -15,8 +15,6 @@ import static de.thb.crazyhorseracing.entity.Lobby.LobbyState.PLAYING;
 
 @JsonIncludeProperties({"horses", "winner"})
 public class Game {
-    public static final double INITIAL_RANDOM_VELOCITY = 200.0;
-
     public final Lobby lobby; // needed to communicate game state back to the lobby
     public final List<Horse> horses;
     public final GameMap map;
@@ -38,6 +36,7 @@ public class Game {
 
     public void start() {
         // Give all horses random initial velocities
+        double randomVelocity = map.initialRandomVelocity();
         for (Horse horse : horses) {
             // Pick a random point on the unit circle
             double x = RandomService.nextDouble();
@@ -45,7 +44,7 @@ public class Game {
             x = RandomService.nextBoolean() ? x : -x; // Randomly invert x
             y = RandomService.nextBoolean() ? y : -y; // Randomly invert y
 
-            horse.setVelocity(new Vec(INITIAL_RANDOM_VELOCITY*x, INITIAL_RANDOM_VELOCITY*y));
+            horse.setVelocity(new Vec(randomVelocity*x, randomVelocity*y));
         }
         lobby.setState(PLAYING);
     }
