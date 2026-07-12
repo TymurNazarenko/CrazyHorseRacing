@@ -80,6 +80,9 @@ public class MainController {
         return "level_creator";
     }
 
+    @GetMapping("/horse_creator")
+    public String horse_creator() { return "horse_creator"; }
+
     @GetMapping("/account")
     public String account(Model model, HttpServletRequest request, HttpServletResponse response) {
         Player player = playerManager.getOrCreatePlayer(request, response);

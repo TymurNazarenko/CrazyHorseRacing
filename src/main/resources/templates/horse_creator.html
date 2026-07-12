@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Horse Hitbox Editor</title>
+
+<style>
+body{
+    margin:0;
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+#sidebar{
+    width:320px;
+    background:#f4f4f4;
+    padding:15px;
+    overflow:auto;
+    border-right:1px solid #ccc;
+    box-sizing:border-box;
+}
+
+#canvas{
+    flex:1;
+    background:#ddd;
+    cursor:crosshair;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+input,textarea,button{
+    width:100%;
+    box-sizing:border-box;
+    margin-top:5px;
+}
+
+textarea{
+    height:220px;
+    font-family:monospace;
+}
+
+.info{
+    margin-top:15px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+button{
+    padding:8px;
+}
+
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+
+<h2>Horse Editor</h2>
+
+<label>Horse ID</label>
+<input id="horseId" type="number" value="1">
+
+<label>Image Path (saved in JSON)</label>
+<input id="imagePath" value="/images/horse/cyan.png">
+
+<label>Load Image</label>
+<input id="imageFile" type="file" accept="image/*">
+
+<label>Zoom</label>
+<input id="zoom" type="range" min="0.25" max="5" step="0.05" value="1">
+
+<button id="exportBtn">Export JSON</button>
+
+<button id="importBtn">Import JSON</button>
+
+<textarea id="json"></textarea>
+
+<div class="info">
+<b>Controls</b><br>
+Left click empty space → Add point<br>
+Drag point → Move<br>
+Right click point → Delete<br>
+Mouse wheel not used (zoom slider instead)
+</div>
+
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+let image=new Image();
+let imageLoaded=false;
+
+let zoom=1;
+
+let points=[];
+
+let dragging=-1;
+
+const POINT_RADIUS=7;
+
+function resize(){
+    canvas.width=window.innerWidth-320;
+    canvas.height=window.innerHeight;
+    draw();
+}
+
+window.addEventListener("resize",resize);
+resize();
+
+document.getElementById("zoom").addEventListener("input",e=>{
+    zoom=parseFloat(e.target.value);
+    draw();
+});
+
+document.getElementById("imageFile").addEventListener("change",e=>{
+    const file=e.target.files[0];
+    if(!file) return;
+
+    const reader=new FileReader();
+
+    reader.onload=function(ev){
+        image.onload=function(){
+            imageLoaded=true;
+            draw();
+        }
+        image.src=ev.target.result;
+    }
+
+    reader.readAsDataURL(file);
+});
+
+function worldToScreen(x,y){
+    return {
+        x:canvas.width/2+x*zoom,
+        y:canvas.height/2-y*zoom
+    };
+}
+
+function screenToWorld(x,y){
+    return {
+        x:(x-canvas.width/2)/zoom,
+        y:-(y-canvas.height/2)/zoom
+    };
+}
+
+function drawGrid(){
+
+    ctx.strokeStyle="#bbb";
+    ctx.lineWidth=1;
+
+    const spacing=50*zoom;
+
+    let ox=(canvas.width/2)%spacing;
+
+    for(let x=ox;x<canvas.width;x+=spacing){
+        ctx.beginPath();
+        ctx.moveTo(x,0);
+        ctx.lineTo(x,canvas.height);
+        ctx.stroke();
+    }
+
+    let oy=(canvas.height/2)%spacing;
+
+    for(let y=oy;y<canvas.height;y+=spacing){
+        ctx.beginPath();
+        ctx.moveTo(0,y);
+        ctx.lineTo(canvas.width,y);
+        ctx.stroke();
+    }
+
+    ctx.strokeStyle="#ff0000";
+    ctx.lineWidth=2;
+
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2,0);
+    ctx.lineTo(canvas.width/2,canvas.height);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0,canvas.height/2);
+    ctx.lineTo(canvas.width,canvas.height/2);
+    ctx.stroke();
+}
+
+function draw(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    drawGrid();
+
+	if (imageLoaded) {
+
+		// Always draw the horse as 100×100 world units.
+		const topLeft = worldToScreen(-50, 50);
+		const bottomRight = worldToScreen(50, -50);
+
+		ctx.drawImage(
+			image,
+			topLeft.x,
+			topLeft.y,
+			bottomRight.x - topLeft.x,
+			bottomRight.y - topLeft.y
+		);
+	}
+
+    if(points.length>1){
+
+        ctx.strokeStyle="lime";
+        ctx.lineWidth=2;
+
+        ctx.beginPath();
+
+        let s=worldToScreen(points[0].x,points[0].y);
+
+        ctx.moveTo(s.x,s.y);
+
+        for(let i=1;i<points.length;i++){
+
+            s=worldToScreen(points[i].x,points[i].y);
+            ctx.lineTo(s.x,s.y);
+
+        }
+
+        ctx.closePath();
+        ctx.stroke();
+
+    }
+
+    for(let i=0;i<points.length;i++){
+
+        let s=worldToScreen(points[i].x,points[i].y);
+
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,POINT_RADIUS,0,Math.PI*2);
+        ctx.fillStyle="orange";
+        ctx.fill();
+        ctx.strokeStyle="black";
+        ctx.stroke();
+
+        ctx.fillStyle="black";
+        ctx.font="14px Arial";
+        ctx.fillText(
+            i+": ("+
+            Math.round(points[i].x)+","+
+            Math.round(points[i].y)+")",
+            s.x+10,
+            s.y-10
+        );
+
+    }
+
+}
+
+function findPoint(mx,my){
+
+    for(let i=0;i<points.length;i++){
+
+        let s=worldToScreen(points[i].x,points[i].y);
+
+        if(Math.hypot(mx-s.x,my-s.y)<POINT_RADIUS+3)
+            return i;
+    }
+
+    return -1;
+}
+
+canvas.addEventListener("mousedown",e=>{
+
+    if(e.button!==0) return;
+
+    let idx=findPoint(e.offsetX,e.offsetY);
+
+    if(idx!=-1){
+        dragging=idx;
+        return;
+    }
+
+    let p=screenToWorld(e.offsetX,e.offsetY);
+
+    points.push({
+        x:Math.round(p.x),
+        y:Math.round(p.y)
+    });
+
+    draw();
+
+});
+
+canvas.addEventListener("mousemove",e=>{
+
+    if(dragging==-1) return;
+
+    let p=screenToWorld(e.offsetX,e.offsetY);
+
+    points[dragging].x=Math.round(p.x);
+    points[dragging].y=Math.round(p.y);
+
+    draw();
+
+});
+
+window.addEventListener("mouseup",()=>{
+    dragging=-1;
+});
+
+canvas.addEventListener("contextmenu",e=>{
+
+    e.preventDefault();
+
+    let idx=findPoint(e.offsetX,e.offsetY);
+
+    if(idx!=-1){
+        points.splice(idx,1);
+        draw();
+    }
+
+});
+
+document.getElementById("exportBtn").onclick=function(){
+
+    const obj={
+        id:parseInt(document.getElementById("horseId").value),
+        imagePath:document.getElementById("imagePath").value,
+        hitbox:points.map(p=>[
+            Math.round(p.x),
+            Math.round(p.y)
+        ])
+    };
+
+	const hitbox = points
+		.map(p => `[${Math.round(p.x)}, ${Math.round(p.y)}]`)
+		.join(", ");
+
+	const text =
+	`{
+	  "id": ${obj.id},
+	  "imagePath": "${obj.imagePath}",
+	  "hitbox": [${hitbox}]
+	}`;
+
+	document.getElementById("json").value = text;
+
+};
+
+document.getElementById("importBtn").onclick=function(){
+
+    try{
+
+        const obj=JSON.parse(document.getElementById("json").value);
+
+        document.getElementById("horseId").value=obj.id;
+        document.getElementById("imagePath").value=obj.imagePath;
+
+        points=obj.hitbox.map(p=>({
+            x:p[0],
+            y:p[1]
+        }));
+
+        draw();
+
+    }catch(e){
+        alert("Invalid JSON");
+    }
+
+};
+
+draw();
+
+</script>
+
+</body>
+</html>

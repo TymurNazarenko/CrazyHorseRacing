@@ -8,7 +8,7 @@ public record GameMap(long id, List<Wall> walls, Carrot carrot, int maxPlayers, 
         this.id = id;
         this.walls = Collections.unmodifiableList(walls);
         this.carrot = carrot;
-        this.maxPlayers = maxPlayers;
+        this.maxPlayers = Math.min(maxPlayers, horseSpawnpoints.size());
         this.horseSpawnpoints = Collections.unmodifiableList(horseSpawnpoints);
         this.imagePath = imagePath;
         this.horseSize = horseSize;
