@@ -36,6 +36,7 @@ public class Player {
     private String nickname; // The name which is shown to other users
 
     @Getter
+    @Setter
     @Transient
     private HorseType horseType;
 
@@ -58,10 +59,6 @@ public class Player {
     }
 
     protected Player() {}
-
-    public void setHorseType(@NonNull HorseType horseType) {
-        this.horseType = horseType;
-    }
 
     public void addWin() {
         wins++;

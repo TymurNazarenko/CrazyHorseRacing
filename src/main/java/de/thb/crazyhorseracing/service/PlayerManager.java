@@ -22,7 +22,7 @@ public class PlayerManager {
     public PlayerManager(PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
         this.players = new ArrayList<>();
-        passwordHasher = new BCryptPasswordEncoder();
+        this.passwordHasher = new BCryptPasswordEncoder();
     }
 
     @PostConstruct
@@ -72,6 +72,7 @@ public class PlayerManager {
         }
 
         player.setNickname(nickname);
+        playerRepository.save(player);
         return new Response(true, "Nickname has been set");
     }
 
@@ -82,6 +83,7 @@ public class PlayerManager {
         String passwordHash = passwordHasher.encode(password);
         player.setPasswordHash(passwordHash);
         player.setLogin(login);
+        playerRepository.save(player);
         return new Response(true, "Login and password successfully set");
     }
 
