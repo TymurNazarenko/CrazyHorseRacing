@@ -7,7 +7,6 @@ Each horse starts with a random velocity, but the players can accelerate their h
 
 
 # TODOs:
-- Add a way for players to log in to their accounts
 - Polish the levels and horses, and create more of them
 - Make it so that the power of the initial velocity of horses is not a constant, but is a variable controlled by the level
 - Fix the fact that the database allows null entries for players
