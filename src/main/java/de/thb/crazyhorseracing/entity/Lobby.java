@@ -138,6 +138,10 @@ public class Lobby {
             stopGameBeginningTimer();
         }
 
+        if (players.isEmpty()) {
+            destroyGameAndLobby();
+        }
+
         return true;
     }
 
