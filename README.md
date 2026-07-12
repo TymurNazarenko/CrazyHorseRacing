@@ -7,7 +7,6 @@ Each horse starts with a random velocity, but the players can accelerate their h
 
 
 # TODOs:
-- Fix addWin and addGame not saving to the DB
 - Create more levels
 - Make it so that the power of the initial velocity of horses is not a constant, but is a variable controlled by the level
 - Fix the fact that the database allows null entries for players

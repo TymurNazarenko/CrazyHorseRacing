@@ -4,6 +4,7 @@ import de.thb.crazyhorseracing.entity.GameMap;
 import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.GameMapProvider;
+import de.thb.crazyhorseracing.repository.PlayerRepository;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,14 @@ public class LobbyManager {
     private final TaskScheduler scheduler;
     private final List<Lobby> lobbies;
     private final GameMapProvider maps;
+    private final PlayerRepository playerRepository;
 
-    public LobbyManager(GameMapProvider maps, ThreadPoolTaskExecutor executor, TaskScheduler scheduler) {
+    public LobbyManager(GameMapProvider maps, ThreadPoolTaskExecutor executor, TaskScheduler scheduler, PlayerRepository playerRepository) {
         this.executor = executor;
         this.scheduler = scheduler;
         this.maps = maps;
         this.lobbies = new ArrayList<>();
+        this.playerRepository = playerRepository;
     }
 
     public Lobby getLobby(Player player) {
@@ -51,10 +54,19 @@ public class LobbyManager {
         return getLobby(id) != null;
     }
 
+    public void savePlayers(List<Player> players) {
+        playerRepository.saveAll(players);
+    }
+
+    public void onLobbyDestroyed(Lobby lobby) {
+        savePlayers(lobby.getPlayers());
+        removeLobby(lobby);
+    }
+
     private Lobby createLobby(int minPlayers, int maxPlayers, Player player, GameMap gameMap) {
         minPlayers = Math.min(minPlayers, gameMap.maxPlayers());
         maxPlayers = Math.min(maxPlayers, gameMap.maxPlayers());
-        Lobby lobby = new Lobby(minPlayers, maxPlayers, player, gameMap, executor, scheduler, this::removeLobby);
+        Lobby lobby = new Lobby(minPlayers, maxPlayers, player, gameMap, executor, scheduler, this::onLobbyDestroyed);
         lobbies.add(lobby);
         return lobby;
     }
