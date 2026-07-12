@@ -91,8 +91,6 @@ public class Game {
             horse.setVelocity(new Vec(0,0));
         }
 
-        // TODO send the winner to the players
-
         lobby.setState(GAME_OVER);
         lobby.startGameEndingTimer();
         gameTaskHandler.cancel(true); // stops the game from processing

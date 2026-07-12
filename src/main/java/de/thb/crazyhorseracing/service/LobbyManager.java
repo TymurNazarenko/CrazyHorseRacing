@@ -97,6 +97,5 @@ public class LobbyManager {
 
     public void removeLobby(Lobby lobby) {
         lobbies.remove(lobby);
-        // TODO automatically redirect the players to the main page?
     }
 }
