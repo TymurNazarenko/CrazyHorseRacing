@@ -1,0 +1,5 @@
+{
+  "id": 5,
+  "imagePath": "/images/horse/red.png",
+  "hitbox": [[-50, -50], [-50, 50], [50, 50], [50, -50]]
+}
