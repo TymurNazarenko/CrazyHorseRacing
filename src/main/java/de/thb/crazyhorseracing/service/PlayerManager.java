@@ -4,14 +4,19 @@ import de.thb.crazyhorseracing.entity.HorseType;
 import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.PlayerRepository;
 import de.thb.crazyhorseracing.service.object.LoginResponse;
-import de.thb.crazyhorseracing.service.object.Response;
+import de.thb.crazyhorseracing.service.object.ActionResponse;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class PlayerManager {
@@ -30,29 +35,56 @@ public class PlayerManager {
         players = (List<Player>) playerRepository.findAll();
     }
 
-    public Player getPlayerByJID(String jid) {
-        return players.stream().filter(player -> player.getJid().equals(jid)).findFirst().orElse(null);
+    public String getAuthCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) return null;
+        Cookie AuthCookie = Arrays.stream(cookies).filter(cookie -> "AuthCookie".equals(cookie.getName())).findFirst().orElse(null);
+        if (AuthCookie == null) return null;
+        return AuthCookie.getValue();
     }
 
-    private Player createPlayer(String jid, HorseType horseType) {
-        Player player = new Player(jid, horseType);
+    public void setAuthCookie(HttpServletResponse response, String AuthCookie) {
+        Cookie cookie = new Cookie("AuthCookie", AuthCookie);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24 * 30);
+        response.addCookie(cookie);
+    }
+
+    public String getOrCreateAuthCookie(HttpServletRequest request, HttpServletResponse response) {
+        String AuthCookie = getAuthCookie(request);
+        if (AuthCookie != null) { return AuthCookie; }
+
+        AuthCookie = UUID.randomUUID().toString();
+        setAuthCookie(response, AuthCookie);
+        return AuthCookie;
+    }
+
+    private Player createPlayer(String AuthCookie, HorseType horseType) {
+        Player player = new Player(AuthCookie, horseType);
         players.add(player);
         playerRepository.save(player);
-        return getPlayerByJID(jid);
+        return getPlayer(AuthCookie);
     }
 
-    private Player createPlayer(String jid) {
-        return createPlayer(jid, null);
+    private Player createPlayer(String AuthCookie) {
+        return createPlayer(AuthCookie, null);
     }
 
-    public Player getOrCreatePlayer(String jid, HorseType horseType) {
-        Player player = getPlayerByJID(jid);
-        if (player == null) player = createPlayer(jid, horseType);
+    public Player getPlayer(String AuthCookie) {
+        return players.stream().filter(player -> player.getAuthCookie().equals(AuthCookie)).findFirst().orElse(null);
+    }
+
+    public Player getPlayer(HttpServletRequest request) {
+        return getPlayer(getAuthCookie(request));
+    }
+
+    public Player getOrCreatePlayer(HttpServletRequest request, HttpServletResponse response) {
+        String AuthCookie = getOrCreateAuthCookie(request, response);
+        Player player =  getPlayer(AuthCookie);
+        if (player == null) player = createPlayer(AuthCookie);
         return player;
-    }
-
-    public Player getOrCreatePlayer(String jid) {
-        return getOrCreatePlayer(jid, null);
     }
 
     public Player getPlayerByLogin(String login) {
@@ -64,36 +96,36 @@ public class PlayerManager {
         return (playerWithLogin == null) || (playerWithLogin.equals(player));
     }
 
-    public Response setNickname(Player player, String nickname) {
+    public ActionResponse setNickname(Player player, String nickname) {
         if (nickname == null || nickname.isEmpty()) {
-            return new Response(false, "Nickname can't be empty");
+            return new ActionResponse(false, "Nickname can't be empty");
         } else if (nickname.length() > 30) {
-            return new Response(false, "Nickname too long");
+            return new ActionResponse(false, "Nickname too long");
         }
 
         player.setNickname(nickname);
         playerRepository.save(player);
-        return new Response(true, "Nickname has been set");
+        return new ActionResponse(true, "Nickname has been set");
     }
 
-    public Response setPlayerLoginPassword(Player player, String login, String password) {
-        if (login.isEmpty() || password.isEmpty()) return new Response(false,"Login and password can't be empty");
-        if (!isLoginAvailable(player, login)) return new Response(false, "Login is already taken");
+    public ActionResponse setPlayerLoginPassword(Player player, String login, String password) {
+        if (login.isEmpty() || password.isEmpty()) return new ActionResponse(false,"Login and password can't be empty");
+        if (!isLoginAvailable(player, login)) return new ActionResponse(false, "Login is already taken");
 
         String passwordHash = passwordHasher.encode(password);
         player.setPasswordHash(passwordHash);
         player.setLogin(login);
         playerRepository.save(player);
-        return new Response(true, "Login and password successfully set");
+        return new ActionResponse(true, "Login and password successfully set");
     }
 
-    public Response setPlayerHorseType(Player player, HorseType horseType) {
+    public ActionResponse setPlayerHorseType(Player player, HorseType horseType) {
         if (horseType == null) {
-            return new Response(false, "Invalid horse selected");
+            return new ActionResponse(false, "Invalid horse selected");
         }
 
         player.setHorseType(horseType);
-        return new Response(true, "Horse type selected");
+        return new ActionResponse(true, "Horse type selected");
     }
 
     public boolean doesPasswordMatch(Player player, String password) {
@@ -117,6 +149,6 @@ public class PlayerManager {
             return new LoginResponse(false, "Wrong password");
         }
 
-        return new LoginResponse(true, "Successfully logged in", player.getJid());
+        return new LoginResponse(true, "Successfully logged in", player.getAuthCookie());
     }
 }

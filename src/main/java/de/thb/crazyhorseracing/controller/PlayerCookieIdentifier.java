@@ -1,12 +1,10 @@
 package de.thb.crazyhorseracing.controller;
 
-import de.thb.crazyhorseracing.entity.Lobby;
 import de.thb.crazyhorseracing.entity.Player;
-import de.thb.crazyhorseracing.service.LobbyManager;
 import de.thb.crazyhorseracing.service.PlayerManager;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -15,8 +13,9 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.Map;
 
-public class PlayerMoveAuthenticator implements HandshakeInterceptor {
-    private final LobbyManager lobbies;
+public class PlayerCookieIdentifier implements HandshakeInterceptor {
+    private final PlayerManager players;
+
     @Override
     public boolean beforeHandshake(@NonNull ServerHttpRequest request,
                                    @NonNull ServerHttpResponse response,
@@ -24,31 +23,19 @@ public class PlayerMoveAuthenticator implements HandshakeInterceptor {
                                    @NonNull Map<String, Object> attributes) {
         try {
             if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
-
-            int gameId = extractGameId(request);
-            Lobby lobby = lobbies.getLobby(gameId);
-            if (lobby == null) return false;
-
-            Player player = (Player) attributes.get("player");
-            if (player == null || !lobby.hasPlayer(player)) return false;
-
+            HttpServletRequest httpServletRequest = servletRequest.getServletRequest();
+            Player player = players.getPlayer(httpServletRequest);
+            attributes.put("player", player);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    private int extractGameId(ServerHttpRequest request) {
-        String path = request.getURI().getPath();
-        // /ws/game/{id}/...
-        String[] parts = path.split("/");
-        return Integer.parseInt(parts[3]); // ["", "ws", "game", "{id}"]
-    }
-
-    public PlayerMoveAuthenticator(LobbyManager lobbies) {
-        this.lobbies = lobbies;
+    public PlayerCookieIdentifier(PlayerManager players) {
+        this.players = players;
     }
 
     @Override
-    public void afterHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response, @NonNull WebSocketHandler wsHandler, Exception exception) {}
+    public void afterHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response, @NonNull WebSocketHandler wsHandler, @Nullable Exception exception) {}
 }

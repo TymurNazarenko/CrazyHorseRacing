@@ -14,17 +14,14 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @Component
 public class PlayerMoveHandlerWS extends TextWebSocketHandler {
     private final LobbyManager lobbies;
-    private final PlayerManager players;
 
-    public PlayerMoveHandlerWS(LobbyManager lobbies, PlayerManager players) {
+    public PlayerMoveHandlerWS(LobbyManager lobbies) {
         this.lobbies = lobbies;
-        this.players = players;
     }
 
     @Override
     protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) {
-        String jsessionId = (String) session.getAttributes().get("JSESSIONID");
-        Player player = players.getPlayerByJID(jsessionId);
+        Player player = (Player) session.getAttributes().get("player");
         if (player == null) return;
 
         Lobby lobby = lobbies.getLobby(player);
@@ -35,7 +32,6 @@ public class PlayerMoveHandlerWS extends TextWebSocketHandler {
             MoveType moveType = MoveType.valueOf(payload);
             lobby.getGame().doPlayerMove(player, moveType);
         } catch (IllegalArgumentException e) {
-            // TODO
             return;
         }
     }

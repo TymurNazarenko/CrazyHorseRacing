@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import de.thb.crazyhorseracing.service.RandomNameGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
@@ -16,7 +15,7 @@ public class Player {
 
     @Getter
     @Setter
-    private String jid;
+    private String AuthCookie;
 
     @Getter
     @Setter
@@ -47,15 +46,15 @@ public class Player {
     @Setter
     private int playedGames = 0;
 
-    public Player(String jid, HorseType selectedHorseType) {
-        this.jid = jid;
+    public Player(String AuthCookie, HorseType selectedHorseType) {
+        this.AuthCookie = AuthCookie;
         this.horseType = (selectedHorseType != null) ? selectedHorseType : defaultHorseType;
         this.nickname = RandomNameGenerator.generateRandomName();
         this.UUID = java.util.UUID.randomUUID().toString();
     }
 
-    public Player(String jid) {
-        this(jid, null);
+    public Player(String AuthCookie) {
+        this(AuthCookie, null);
     }
 
     protected Player() {}

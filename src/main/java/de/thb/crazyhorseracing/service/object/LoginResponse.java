@@ -3,13 +3,13 @@ package de.thb.crazyhorseracing.service.object;
 import lombok.Getter;
 import lombok.Setter;
 
-public class LoginResponse extends Response {
+public class LoginResponse extends ActionResponse {
     @Getter
     @Setter
-    private String jid;
-    public LoginResponse(boolean success, String message, String jid) {
+    private String AuthCookie;
+    public LoginResponse(boolean success, String message, String AuthCookie) {
         super(success, message);
-        this.jid = jid;
+        this.AuthCookie = AuthCookie;
     }
 
     public LoginResponse(boolean success, String message) {
