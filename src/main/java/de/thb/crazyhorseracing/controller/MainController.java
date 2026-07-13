@@ -35,6 +35,13 @@ public class MainController {
         Player player = playerManager.getOrCreatePlayer(request, response);
         model.addAttribute("player", player);
         model.addAttribute("horses", horseTypeProvider.getHorseTypes());
+
+        boolean hasActiveGame = lobbyManager.playerHasLobby(player);
+        model.addAttribute("hasActiveGame", hasActiveGame);
+        if (hasActiveGame) {
+            model.addAttribute("activeGameId", lobbyManager.getLobby(player).getId());
+        }
+
         return "home";
     }
 

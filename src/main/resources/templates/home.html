@@ -42,23 +42,37 @@
     <h1 style="text-align:center">Crazy Horse Racing</h1>
 
 
+    <div class="form-wrapper">
+        <h3 style="text-align:center">Choose your horse</h3>
+        <form action="/start_game" method="post" style="justify-content: center; align-items: center; align-self: center"
+            th:classappend="${hasActiveGame} ? 'disabled-form' : ''">
+            <div class="grid-container">
+                <div class="grid-item" th:each="horseType : ${horses}">
+                    <input type="radio"
+                           name="selectedHorseType"
+                           th:id="'horseType-' + ${horseType.id}"
+                           th:value="${horseType.id}" />
+                    <label th:for="'horseType-' + ${horseType.id}">
+                        <img th:src="${horseType.imagePath}" alt="Horse"/>
+                    </label>
+                </div>
+            </div>
 
-    <h3 style="text-align:center">Choose your horse</h3>
-    <form action="/start_game" method="post" style="justify-content: center; align-items: center; align-self: center">
-        <div class="grid-container">
-            <div class="grid-item" th:each="horseType : ${horses}">
-                <input type="radio"
-                       name="selectedHorseType"
-                       th:id="'horseType-' + ${horseType.id}"
-                       th:value="${horseType.id}" />
-                <label th:for="'horseType-' + ${horseType.id}">
-                    <img th:src="${horseType.imagePath}" alt="Horse"/>
-                </label>
+            <button type="submit" id="submitBtn" disabled>Search for a game</button>
+        </form>
+
+        <div class="overlay" th:if="${hasActiveGame}">
+            <div class="popup">
+                <h2>You are already in a game</h2>
+
+                <a th:href="@{/game/{id}(id=${activeGameId})}"
+                   class="join-button">
+                    Join your game
+                </a>
             </div>
         </div>
+    </div>
 
-        <button type="submit" id="submitBtn" disabled>Search for a game</button>
-    </form>
 
     <div th:if="${error != null and !#strings.isEmpty(error)}"
          style="color: red; display:flex; justify-content: center; align-items: center; padding: 10px"
