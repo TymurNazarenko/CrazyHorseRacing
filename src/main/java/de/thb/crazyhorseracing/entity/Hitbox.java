@@ -24,8 +24,8 @@ public record Hitbox(List<Vec> vertices) {
         double avgX = 0;
         double avgY = 0;
         for (Vec vec : vertices) {
-            avgX += vec.getX();
-            avgY += vec.getY();
+            avgX += vec.x();
+            avgY += vec.y();
         }
         avgX /= vertices.size();
         avgY /= vertices.size();
@@ -35,19 +35,19 @@ public record Hitbox(List<Vec> vertices) {
 
     // Check if point q lies on segment pr
     private static boolean onSegment(Vec p, Vec q, Vec r) {
-        return q.getX() <= Math.max(p.getX(), r.getX()) && q.getX() >= Math.min(p.getX(), r.getX()) &&
-                q.getY() <= Math.max(p.getY(), r.getY()) && q.getY() >= Math.min(p.getY(), r.getY());
+        return q.x() <= Math.max(p.x(), r.x()) && q.x() >= Math.min(p.x(), r.x()) &&
+                q.y() <= Math.max(p.y(), r.y()) && q.y() >= Math.min(p.y(), r.y());
     }
 
     private static Vec getIntersection(Vec p1, Vec p2, Vec p3, Vec p4) {
-        double A1 = p2.getY() - p1.getY();
-        double B1 = p1.getX() - p2.getX();
-        double C1 = A1 * p1.getX() + B1 * p1.getY();
+        double A1 = p2.y() - p1.y();
+        double B1 = p1.x() - p2.x();
+        double C1 = A1 * p1.x() + B1 * p1.y();
 
         // Line 2: A2x + B2y = C2
-        double A2 = p4.getY() - p3.getY();
-        double B2 = p3.getX() - p4.getX();
-        double C2 = A2 * p3.getX() + B2 * p3.getY();
+        double A2 = p4.y() - p3.y();
+        double B2 = p3.x() - p4.x();
+        double C2 = A2 * p3.x() + B2 * p3.y();
 
         double determinant = A1 * B2 - A2 * B1;
 

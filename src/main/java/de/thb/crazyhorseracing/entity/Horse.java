@@ -1,6 +1,5 @@
 package de.thb.crazyhorseracing.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -80,7 +79,7 @@ public class Horse implements AbsoluteHitboxObject {
 
         // Step 2: Reflect off the line made by those two collision points
         Vec intersectionLine = first.subtract(second);
-        Vec intersectionLineNormal = new Vec(-intersectionLine.getY(), intersectionLine.getX()).normalized();
+        Vec intersectionLineNormal = new Vec(-intersectionLine.y(), intersectionLine.x()).normalized();
         double dot = intersectionLineNormal.dot(velocity);
         velocity = velocity.subtract(intersectionLineNormal.multiply(2*dot)); // v′ = v − 2(v⋅n)n
 

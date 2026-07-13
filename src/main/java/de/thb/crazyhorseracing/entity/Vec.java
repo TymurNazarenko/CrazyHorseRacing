@@ -1,19 +1,10 @@
 package de.thb.crazyhorseracing.entity;
 
-import lombok.Getter;
+import lombok.NonNull;
 
-// A pure class
-public class Vec {
-    @Getter
-    private final double x, y;
-
-    public Vec(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-
+public record Vec(double x, double y) {
     public Vec applyVelocity(Vec velocity, double dt) {
-        return new Vec(x + velocity.getX() * dt, y + velocity.getY() * dt);
+        return new Vec(x + velocity.x() * dt, y + velocity.y() * dt);
     }
 
     public double dist(Vec other) {
@@ -37,7 +28,7 @@ public class Vec {
     }
 
     public Vec multiply(double m) {
-        return new  Vec(x * m, y * m);
+        return new Vec(x * m, y * m);
     }
 
     public Vec normalized() {
@@ -47,11 +38,11 @@ public class Vec {
     }
 
     public double dot(Vec other) {
-        return x * other.getX() + y * other.getY();
+        return x * other.x() + y * other.y();
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "(" + x + "," + y + ")";
     }
 }
