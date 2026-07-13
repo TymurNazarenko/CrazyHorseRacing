@@ -52,7 +52,7 @@ public class Player {
         this.nickname = RandomNameGenerator.generateRandomName();
         this.UUID = java.util.UUID.randomUUID().toString();
         this.wins = 0;
-        this .playedGames = 0;
+        this.playedGames = 0;
     }
 
     public Player(String AuthCookie) {
