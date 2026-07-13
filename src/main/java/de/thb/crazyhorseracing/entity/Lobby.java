@@ -86,10 +86,10 @@ public class Lobby {
         this.destroyCallback = destroyCallback;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
-        players = new ArrayList<>();
-        players.add(player);
+        this.players = new ArrayList<>();
         this.game = new Game(this, gameMap);
-        game.addHorse(player);
+
+        addPlayer(player);
     }
 
     public boolean canAddPlayer(Player player) {
