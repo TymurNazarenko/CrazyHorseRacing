@@ -15,7 +15,7 @@ public class GameTask implements Runnable {
 
     @Override
     public void run() {
-        game.start();
+        game.processGameBeginning();
         System.out.printf("Game started on map %d with %d horses%n", game.map.id(), game.horses.size());
         long lastTime = System.nanoTime();
         while (running && !Thread.currentThread().isInterrupted()) {

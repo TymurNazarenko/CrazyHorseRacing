@@ -1,7 +1,7 @@
 package de.thb.crazyhorseracing.controller;
 
-import de.thb.crazyhorseracing.entity.Lobby;
-import de.thb.crazyhorseracing.service.LobbyManager;
+import de.thb.crazyhorseracing.entity.Game;
+import de.thb.crazyhorseracing.service.GameManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
@@ -9,19 +9,19 @@ import tools.jackson.databind.ObjectMapper;
 @Component
 public class GameStateUpdateScheduler {
     private final GameStateUpdateWS handler;
-    private final LobbyManager lobbies;
+    private final GameManager games;
     private final ObjectMapper jsonMapper;
 
-    public GameStateUpdateScheduler(GameStateUpdateWS handler, LobbyManager lobbies) {
+    public GameStateUpdateScheduler(GameStateUpdateWS handler, GameManager games) {
         this.handler = handler;
-        this.lobbies = lobbies;
+        this.games = games;
         this.jsonMapper = new ObjectMapper();
     }
 
     @Scheduled(fixedRate = 10) // every 0.01 seconds (unrealistic, but much better clientside for now)
     public void pushUpdates() {
-        for (Lobby lobby : lobbies.getLobbies()) {
-            handler.broadcast(lobby.id, jsonMapper.writeValueAsString(lobby.game));
+        for (Game game : games.getGames()) {
+            handler.broadcast(game.id, jsonMapper.writeValueAsString(game));
         }
     }
 }

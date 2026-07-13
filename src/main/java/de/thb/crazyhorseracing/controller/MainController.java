@@ -1,10 +1,10 @@
 package de.thb.crazyhorseracing.controller;
 
 import de.thb.crazyhorseracing.entity.HorseType;
-import de.thb.crazyhorseracing.entity.Lobby;
+import de.thb.crazyhorseracing.entity.Game;
 import de.thb.crazyhorseracing.entity.Player;
 import de.thb.crazyhorseracing.repository.HorseTypeProvider;
-import de.thb.crazyhorseracing.service.LobbyManager;
+import de.thb.crazyhorseracing.service.GameManager;
 import de.thb.crazyhorseracing.service.PlayerManager;
 import de.thb.crazyhorseracing.service.response.LoginResponse;
 import de.thb.crazyhorseracing.service.response.ActionResponse;
@@ -20,12 +20,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MainController {
-    private final LobbyManager lobbyManager;
+    private final GameManager gameManager;
     private final PlayerManager playerManager;
     private final HorseTypeProvider horseTypeProvider;
 
-    public MainController(LobbyManager lobbyManager, PlayerManager playerManager, HorseTypeProvider horseTypeProvider) {
-        this.lobbyManager = lobbyManager;
+    public MainController(GameManager gameManager, PlayerManager playerManager, HorseTypeProvider horseTypeProvider) {
+        this.gameManager = gameManager;
         this.playerManager = playerManager;
         this.horseTypeProvider = horseTypeProvider;
     }
@@ -36,10 +36,10 @@ public class MainController {
         model.addAttribute("player", player);
         model.addAttribute("horses", horseTypeProvider.getHorseTypes());
 
-        boolean hasActiveGame = lobbyManager.playerHasLobby(player);
+        boolean hasActiveGame = gameManager.playerHasGame(player);
         model.addAttribute("hasActiveGame", hasActiveGame);
         if (hasActiveGame) {
-            model.addAttribute("activeGameId", lobbyManager.getLobby(player).id);
+            model.addAttribute("activeGameId", gameManager.getGame(player).id);
         }
 
         return "home";
@@ -48,18 +48,18 @@ public class MainController {
     @GetMapping("/game/{id}")
     public String game(@PathVariable int id, Model model, HttpServletRequest request, HttpServletResponse response) {
         Player player = playerManager.getOrCreatePlayer(request, response);
-        Lobby lobby = lobbyManager.getLobby(id);
+        Game game = gameManager.getGame(id);
 
-        if (lobby == null) {
+        if (game == null) {
             return "redirect:/";
-        } else if (!lobby.isPlayerAllowed(player)) {
+        } else if (!game.isPlayerAllowed(player)) {
             return "redirect:/";
         }
 
         model.addAttribute("player", player);
-        model.addAttribute("levelImage", lobby.game.map.imagePath()); // populate the game (image)
-        model.addAttribute("horseSizeMultiplier", lobby.game.map.horseSize());
-        model.addAttribute("gameId", lobby.id);
+        model.addAttribute("levelImage", game.map.imagePath()); // populate the game (image)
+        model.addAttribute("horseSizeMultiplier", game.map.horseSize());
+        model.addAttribute("gameId", game.id);
         model.addAttribute("UUID", player.getUUID());
 
         return "game";
@@ -77,8 +77,8 @@ public class MainController {
             redirectAttributes.addFlashAttribute("error", actionResponse.message);
         }
 
-        Lobby lobby = lobbyManager.getJoinOrCreateLobby(player);
-        return "redirect:/game/" + lobby.id;
+        Game game = gameManager.getJoinOrCreateGame(player);
+        return "redirect:/game/" + game.id;
     }
 
     @GetMapping("/level_creator")

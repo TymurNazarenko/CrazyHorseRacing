@@ -116,7 +116,7 @@
         status_socket.onmessage = (event) => {
             const message = JSON.parse(event.data.toString());
 
-            document.getElementById("status").innerHTML = message.lobby.state;
+            document.getElementById("status").innerHTML = message.state;
 
             for (const receivedHorse of message.horses) {
                 const horseIndex = getHorseIndex(receivedHorse.id);
