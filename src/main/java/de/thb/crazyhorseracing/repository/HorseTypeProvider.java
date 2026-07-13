@@ -30,6 +30,6 @@ public class HorseTypeProvider {
     }
 
     public HorseType getHorseById(long id) {
-        return horseTypes.stream().filter(h -> h.id() == id).findFirst().orElseGet(() -> null);
+        return horseTypes.stream().filter(h -> h.id() == id).findFirst().orElse(null);
     }
 }

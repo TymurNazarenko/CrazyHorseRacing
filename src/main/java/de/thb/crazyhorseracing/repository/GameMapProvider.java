@@ -22,7 +22,7 @@ public class GameMapProvider {
     }
 
     public GameMap getMapById(long id) {
-        return maps.stream().filter(m -> m.id() == id).findFirst().orElseGet(() -> null);
+        return maps.stream().filter(m -> m.id() == id).findFirst().orElse(null);
     }
 
     public GameMap getRandomMap() {
