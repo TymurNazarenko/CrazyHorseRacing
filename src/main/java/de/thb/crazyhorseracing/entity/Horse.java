@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @JsonIncludeProperties({"id", "type", "player", "pos", "velocity"})
 public class Horse implements AbsoluteHitboxObject {
-    public static final long MOVE_DELAY_NS = 1_000_000_000; // 1 second
-    public static final double MOVE_STRENGTH = 20.0;
+    public static final long MOVE_DELAY_NS = 500_000_000; // 0.5 second
+    public static final double MOVE_STRENGTH = 50.0;
     public static final Vec MOVE_UP_VEC = new Vec(0, -MOVE_STRENGTH);
     public static final Vec MOVE_DOWN_VEC = new Vec(0, MOVE_STRENGTH);
     public static final Vec MOVE_LEFT_VEC = new Vec(-MOVE_STRENGTH, 0);
