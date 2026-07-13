@@ -21,7 +21,7 @@ public class GameStateUpdateScheduler {
     @Scheduled(fixedRate = 10) // every 0.01 seconds (unrealistic, but much better clientside for now)
     public void pushUpdates() {
         for (Lobby lobby : lobbies.getLobbies()) {
-            handler.broadcast(lobby.getId(), jsonMapper.writeValueAsString(lobby.getGame()));
+            handler.broadcast(lobby.id, jsonMapper.writeValueAsString(lobby.game));
         }
     }
 }

@@ -4,8 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class GameTask implements Runnable {
-    @Getter
-    private final Game game;
+    public final Game game;
     @Setter
     @Getter
     private volatile boolean running = true;

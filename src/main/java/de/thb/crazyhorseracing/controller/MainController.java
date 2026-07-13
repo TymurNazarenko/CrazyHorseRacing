@@ -39,7 +39,7 @@ public class MainController {
         boolean hasActiveGame = lobbyManager.playerHasLobby(player);
         model.addAttribute("hasActiveGame", hasActiveGame);
         if (hasActiveGame) {
-            model.addAttribute("activeGameId", lobbyManager.getLobby(player).getId());
+            model.addAttribute("activeGameId", lobbyManager.getLobby(player).id);
         }
 
         return "home";
@@ -57,9 +57,9 @@ public class MainController {
         }
 
         model.addAttribute("player", player);
-        model.addAttribute("levelImage", lobby.getGame().map.imagePath()); // populate the game (image)
-        model.addAttribute("horseSizeMultiplier", lobby.getGame().map.horseSize());
-        model.addAttribute("gameId", lobby.getId());
+        model.addAttribute("levelImage", lobby.game.map.imagePath()); // populate the game (image)
+        model.addAttribute("horseSizeMultiplier", lobby.game.map.horseSize());
+        model.addAttribute("gameId", lobby.id);
         model.addAttribute("UUID", player.getUUID());
 
         return "game";
@@ -78,7 +78,7 @@ public class MainController {
         }
 
         Lobby lobby = lobbyManager.getJoinOrCreateLobby(player);
-        return "redirect:/game/" + lobby.getId();
+        return "redirect:/game/" + lobby.id;
     }
 
     @GetMapping("/level_creator")

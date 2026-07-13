@@ -43,7 +43,7 @@ public class LobbyManager {
 
     public Lobby getLobby(int id) {
         for (Lobby lobby : lobbies) {
-            if (lobby.getId() == id) {
+            if (lobby.id == id) {
                 return lobby;
             }
         }
@@ -59,7 +59,7 @@ public class LobbyManager {
     }
 
     public void onLobbyDestroyed(Lobby lobby) {
-        savePlayers(lobby.getPlayers());
+        savePlayers(lobby.players);
         removeLobby(lobby);
     }
 

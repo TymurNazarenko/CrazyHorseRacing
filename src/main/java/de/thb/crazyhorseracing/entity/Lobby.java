@@ -42,33 +42,23 @@ public class Lobby {
         }
     }
 
-    @Getter
-    private static final AtomicInteger idCounter = new AtomicInteger(0);
-    @Getter
-    private static final long gameBeginningTimerDelayMillis = 5000;
-    @Getter
-    private static final long gameEndingTimerDelayMillis = 3000;
+    public static final AtomicInteger idCounter = new AtomicInteger(0);
+    public static final long gameBeginningTimerDelayMillis = 5000;
+    public static final long gameEndingTimerDelayMillis = 3000;
 
-    @Getter
-    private final int id;
-    @Getter
-    private final int minPlayers;
-    @Getter
-    private final int maxPlayers;
-    @Getter
-    private final List<Player> players;
-    @Getter
-    private final Game game;
+    public final int id;
+    public final int minPlayers;
+    public final int maxPlayers;
+    public final List<Player> players;
+    public final Game game;
 
     @Getter
     @Setter
     private LobbyState state = WAITING_FOR_PLAYERS;
 
 
-    @Getter
-    private final ThreadPoolTaskExecutor executor;
-    @Getter
-    private final TaskScheduler scheduler;
+    public final ThreadPoolTaskExecutor executor;
+    public final TaskScheduler scheduler;
 
     @Getter
     private ScheduledFuture<?> gameTimerTaskFuture;

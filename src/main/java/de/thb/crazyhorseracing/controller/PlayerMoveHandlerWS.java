@@ -30,7 +30,7 @@ public class PlayerMoveHandlerWS extends TextWebSocketHandler {
         String payload = message.getPayload();
         try {
             MoveType moveType = MoveType.valueOf(payload);
-            lobby.getGame().doPlayerMove(player, moveType);
+            lobby.game.doPlayerMove(player, moveType);
         } catch (IllegalArgumentException e) {
             return;
         }
