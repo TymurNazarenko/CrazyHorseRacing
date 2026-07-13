@@ -41,16 +41,18 @@ public class Player {
 
     @Getter
     @Setter
-    private int wins = 0;
+    private int wins;
     @Getter
     @Setter
-    private int playedGames = 0;
+    private int playedGames;
 
     public Player(String AuthCookie, HorseType selectedHorseType) {
         this.AuthCookie = AuthCookie;
         this.horseType = (selectedHorseType != null) ? selectedHorseType : defaultHorseType;
         this.nickname = RandomNameGenerator.generateRandomName();
         this.UUID = java.util.UUID.randomUUID().toString();
+        this.wins = 0;
+        this .playedGames = 0;
     }
 
     public Player(String AuthCookie) {
