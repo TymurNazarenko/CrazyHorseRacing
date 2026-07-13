@@ -1,22 +1,19 @@
 package de.thb.crazyhorseracing.entity;
 
 import lombok.Getter;
-import lombok.Setter;
 
+// A pure class
 public class Vec {
     @Getter
-    @Setter
-    private double x, y;
+    private final double x, y;
 
     public Vec(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    // Every function here is pure
-
     public Vec applyVelocity(Vec velocity, double dt) {
-        return new Vec(x + velocity.getX() * dt, y += velocity.getY() * dt);
+        return new Vec(x + velocity.getX() * dt, y + velocity.getY() * dt);
     }
 
     public double dist(Vec other) {
