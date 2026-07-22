@@ -24,6 +24,8 @@ public class HorseTypeProvider {
         horseTypes = JSONReader.parseJSONFiles(files, HorseTypeDTO.class, new HorseTypeDTOMapper(), "HorseTypeProvider");
         System.out.println("Loaded " + horseTypes.size() + " horse types");
 
+        horseTypes.sort(Comparator.comparingLong(HorseType::id));
+
         if (!horseTypes.isEmpty()) {
             Player.setDefaultHorseType(getHorseById(1));
         }
